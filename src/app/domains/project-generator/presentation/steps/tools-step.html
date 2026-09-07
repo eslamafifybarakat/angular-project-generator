@@ -1,0 +1,36 @@
+@for (group of groups(); track group.titleKey) {
+  <div class="group">
+    <h2 class="group__head">
+      {{ group.titleKey | translate }}
+      @if (group.helpKey) {
+        <app-help [headingKey]="group.titleKey" [bodyKey]="group.helpKey" />
+      }
+    </h2>
+    @for (item of group.items; track item.key) {
+      <label class="check">
+        <input type="checkbox" [checked]="isOn(item.key)" (change)="toggle(item.key, $event)" />
+        <span>
+          <span class="check__text">{{ item.labelKey | translate }}</span>
+          @if (item.note) {
+            <span class="check__sub">
+              @if (isNoteKey(item.note)) {
+                {{ item.note | translate }}
+              } @else {
+                {{ item.note }}
+              }
+            </span>
+          }
+        </span>
+      </label>
+    }
+  </div>
+}
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_scripts_h' | translate }}</h2>
+  <p class="group__sub">{{ 'angular_project_generator_app_scripts_d' | translate }}</p>
+  <div class="code">
+    <pre>@for (script of scripts(); track script) {{{ scriptLine(script) }}
+}</pre>
+  </div>
+</div>

@@ -29,7 +29,7 @@ describe('ProjectConfigService', () => {
     service.toggleLanguage('ar', false);
     service.patch('localization', { defaultLanguage: 'ar' });
     expect(service.issuesFor('languages').map((issue) => issue.messageKey)).toContain(
-      'validation.defaultLang',
+      'angular_project_generator_validation_default_lang',
     );
   });
 
@@ -41,7 +41,7 @@ describe('ProjectConfigService', () => {
       siteUrl: 'https://example.com',
     });
     expect(service.issuesFor('environments').map((issue) => issue.messageKey)).toContain(
-      'validation.envDup',
+      'angular_project_generator_validation_env_dup',
     );
   });
 
@@ -53,7 +53,9 @@ describe('ProjectConfigService', () => {
         features: { toast: 'none', modal: 'none', datePicker: 'customized' },
       }),
     );
-    expect(result.issues.map((issue) => issue.messageKey)).toContain('validation.templateEraIncompatible');
+    expect(result.issues.map((issue) => issue.messageKey)).toContain(
+      'angular_project_generator_validation_template_era_incompatible',
+    );
     expect(service.toJson()).toBe(before);
   });
 
@@ -105,7 +107,7 @@ describe('ProjectConfigService', () => {
   it('rejects an unknown Angular version', () => {
     service.patch('angular', { version: '99' });
     expect(service.issuesFor('angular').map((issue) => issue.messageKey)).toContain(
-      'validation.angular',
+      'angular_project_generator_validation_angular',
     );
   });
 
@@ -157,7 +159,7 @@ describe('ProjectConfigService', () => {
       service.setArchitecturePattern('custom');
       service.updateCustomArchitecture({ sharedDir: 'core' });
       expect(service.issuesFor('architecture').map((i) => i.messageKey)).toContain(
-        'validation.archDirDup',
+        'angular_project_generator_validation_arch_dir_dup',
       );
       expect(service.isValid()).toBe(false);
     });
@@ -166,7 +168,7 @@ describe('ProjectConfigService', () => {
       service.setArchitecturePattern('custom');
       service.updateCustomArchitecture({ groupingDir: '../escape' });
       expect(service.issuesFor('architecture').map((i) => i.messageKey)).toContain(
-        'validation.archDirChars',
+        'angular_project_generator_validation_arch_dir_chars',
       );
     });
 
@@ -174,7 +176,7 @@ describe('ProjectConfigService', () => {
       service.setArchitecturePattern('custom');
       service.addCustomDirectory();
       expect(service.issuesFor('architecture').map((i) => i.messageKey)).toContain(
-        'validation.archDirEmpty',
+        'angular_project_generator_validation_arch_dir_empty',
       );
       service.updateCustomDirectory(0, 'reports');
       expect(service.isValid()).toBe(true);
@@ -218,7 +220,7 @@ describe('ProjectConfigService', () => {
       service.setAngularVersion('14');
       service.patch('features', { datePicker: 'customized' });
       expect(service.issuesFor('features').map((i) => i.messageKey)).toContain(
-        'validation.templateEraIncompatible',
+        'angular_project_generator_validation_template_era_incompatible',
       );
     });
 

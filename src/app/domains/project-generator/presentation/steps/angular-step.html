@@ -1,0 +1,108 @@
+<div class="group">
+  <div class="note note--info">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4M12 8h.01" stroke-linecap="round" />
+    </svg>
+    <div><b>{{ 'angular_project_generator_app_col_status' | translate }}.</b> {{ 'angular_project_generator_app_ang_versions_intro' | translate }}</div>
+  </div>
+
+  <div class="options options--wide" style="margin-top: 16px">
+    @for (row of rows; track row.version) {
+      <button
+        type="button"
+        class="option"
+        [disabled]="!row.selectable"
+        [attr.aria-pressed]="row.selectable ? selected() === row.version : null"
+        (click)="select(row)"
+      >
+        <span class="option__title">
+          Angular {{ row.version }}
+          <span class="badge" [class]="tierBadge(row).class">{{ tierBadge(row).key | translate }}</span>
+          @if (row.buildVerified) {
+            <span class="badge badge--ok"><span class="dot"></span>{{ 'angular_project_generator_app_build_verified' | translate }}</span>
+          } @else {
+            <span class="badge badge--muted">{{ 'angular_project_generator_app_not_build_verified' | translate }}</span>
+          }
+        </span>
+
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_cli' | translate }}:
+          @if (row.cli) {
+            <span class="mono ltr-run">{{ row.cli }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_node' | translate }}:
+          @if (row.node) {
+            <span class="mono ltr-run">{{ row.node }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_ts' | translate }}:
+          @if (row.typescript) {
+            <span class="mono ltr-run">{{ row.typescript }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_bootstrap' | translate }}:
+          @if (row.bootstrap) {
+            <span class="mono ltr-run">{{ row.bootstrap }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_ssr' | translate }}:
+          @if (row.ssrPackage) {
+            <span class="mono ltr-run">{{ row.ssrPackage }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+        <span class="option__desc">
+          {{ 'angular_project_generator_app_col_testing' | translate }}:
+          @if (row.testing) {
+            <span class="mono ltr-run">{{ row.testing }}</span>
+          } @else {
+            <i>{{ 'angular_project_generator_app_not_verified' | translate }}</i>
+          }
+        </span>
+
+        <span class="caps">
+          @for (cap of capabilityRows; track cap.key) {
+            <span
+              class="cap"
+              [class]="'cap--' + capabilityOf(row, cap.key)"
+              [attr.title]="(cap.labelKey | translate) + ': ' + (badge(capabilityOf(row, cap.key)).labelKey | translate)"
+            >
+              <span aria-hidden="true">{{ badge(capabilityOf(row, cap.key)).glyph }}</span>
+              {{ cap.labelKey | translate }}
+            </span>
+          }
+        </span>
+      </button>
+    }
+  </div>
+
+  @for (issue of issues(); track issue.messageKey) {
+    <p class="error" style="margin-top: 12px">{{ issue.messageKey | translate }}</p>
+  }
+
+  <div class="note note--warn" style="margin-top: 16px">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+    </svg>
+    <div>
+      {{ 'angular_project_generator_app_ang_node_note' | translate }}
+      <app-help headingKey="angular_project_generator_app_col_node" bodyKey="angular_project_generator_app_ang_node_note" />
+    </div>
+  </div>
+</div>

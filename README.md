@@ -236,16 +236,30 @@ instead.
 
 ## Naming conventions
 
-Files use the 2016 style guide: `header.component.ts`, `theme.service.ts`,
-`translate.pipe.ts`, `focus-trap.directive.ts` — not Angular 22's newer
-`header.ts` default. Classes carry the matching suffix (`HeaderComponent`,
-`ThemeService`).
+**Updated 2026-09-07** (superseding the original 2016-style-guide choice
+below): this repo's own components now use Angular 22's newer, suffix-free
+convention — `header.ts`, class `Header` — matching the naming contract the
+generator itself imposes on *generated* project output. Services, directives
+and pipes keep their type suffix as before (`theme.service.ts` / `ThemeService`,
+`focus-trap.directive.ts` / `FocusTrapDirective`, `translate.pipe.ts` /
+`TranslatePipe`) — only the component suffix was dropped, both from
+filenames and from class names (`HeaderComponent` → `Header`).
 
-That suffix is not automatic on this CLI. `angular.json`'s `schematics` block
-sets `addTypeToClassName: true` for `component`, `directive`, `service` and
-`pipe`, and it was set **before** anything was generated. Without it every
-generated class comes out as `Header` instead of `HeaderComponent` and you are
-renaming by hand forever.
+`angular.json`'s `schematics` block reflects this: `@schematics/angular:component`
+now sets `addTypeToClassName: false` and `type: ""`, so `ng generate component`
+produces `foo.ts` / class `Foo` directly — no manual rename step. The
+`directive`/`service`/`pipe` schematics are unchanged (`addTypeToClassName: true`),
+since those suffixes stay.
+
+Content resolvers under `infrastructure/templates/*.templates.ts` are a
+separate, unaffected concern: they render *generated project* output, whose
+own naming convention is governed by `deriveFiles()` and the
+`ComponentTemplateRegistry` (`domain/component-template.model.ts`), not by
+this section or by `angular.json`'s schematics. Do not "fix" `.component.ts`
+strings found inside those files without checking what convention the
+generated output is actually supposed to use — some may still document the
+older convention pending a separate pass to bring generated-output naming in
+line with this repo's own.
 
 ---
 
@@ -266,7 +280,7 @@ three get duplicated blocks under a prefix:
 than writing them out, so adding a language cannot leave a route behind.
 
 Step imports are **literal** `import()` calls, one per step. A template-literal
-import (`` import(`${base}/${step}.component`) ``) type-checks and runs, but is
+import (`` import(`${base}/${step}-step`) ``) type-checks and runs, but is
 not statically analysable — the bundler silently stops code-splitting and rolls
 all twelve steps into the initial chunk.
 

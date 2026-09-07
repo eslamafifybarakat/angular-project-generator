@@ -4,8 +4,8 @@
   "data": [
     {
       "id": "ssr-starter",
-      "nameKey": "preset.ssrStarter.name",
-      "descriptionKey": "preset.ssrStarter.body",
+      "nameKey": "angular_project_generator_preset_ssr_starter_name",
+      "descriptionKey": "angular_project_generator_preset_ssr_starter_body",
       "patch": {
         "localization": { "enabled": true, "defaultLanguage": "en", "selectedLanguages": ["en"] },
         "fonts": { "en": "Inter" },
@@ -16,8 +16,8 @@
     },
     {
       "id": "bilingual-site",
-      "nameKey": "preset.bilingual.name",
-      "descriptionKey": "preset.bilingual.body",
+      "nameKey": "angular_project_generator_preset_bilingual_name",
+      "descriptionKey": "angular_project_generator_preset_bilingual_body",
       "patch": {
         "localization": {
           "enabled": true,
@@ -30,8 +30,8 @@
     },
     {
       "id": "enterprise-ddd",
-      "nameKey": "preset.enterprise.name",
-      "descriptionKey": "preset.enterprise.body",
+      "nameKey": "angular_project_generator_preset_enterprise_name",
+      "descriptionKey": "angular_project_generator_preset_enterprise_body",
       "patch": {
         "architecture": { "pattern": "ddd", "includeExampleDomain": true },
         "features": { "toast": "customized", "modal": "customized", "datePicker": "install-later" }
@@ -39,8 +39,8 @@
     },
     {
       "id": "minimal",
-      "nameKey": "preset.minimal.name",
-      "descriptionKey": "preset.minimal.body",
+      "nameKey": "angular_project_generator_preset_minimal_name",
+      "descriptionKey": "angular_project_generator_preset_minimal_body",
       "patch": {
         "rendering": { "mode": "csr", "prerender": false, "hydrationStrategy": "default" },
         "localization": { "enabled": false },

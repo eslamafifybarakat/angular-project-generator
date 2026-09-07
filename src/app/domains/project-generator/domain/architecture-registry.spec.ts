@@ -143,7 +143,7 @@ describe('validateArchitecture', () => {
       }),
     );
     const keys = issues.map((i) => i.messageKey);
-    expect(keys.filter((k) => k === 'validation.archDirEmpty')).toHaveLength(2);
+    expect(keys.filter((k) => k === 'angular_project_generator_validation_arch_dir_empty')).toHaveLength(2);
     expect(issues.map((i) => i.path)).toContain('architecture.custom.coreDir');
     expect(issues.map((i) => i.path)).toContain('architecture.custom.sharedDir');
   });
@@ -152,12 +152,12 @@ describe('validateArchitecture', () => {
     const traversal = validateArchitecture(
       section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), groupingDir: '../outside' } }),
     );
-    expect(traversal.map((i) => i.messageKey)).toContain('validation.archDirChars');
+    expect(traversal.map((i) => i.messageKey)).toContain('angular_project_generator_validation_arch_dir_chars');
 
     const absolute = validateArchitecture(
       section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), layoutDir: '/etc' } }),
     );
-    expect(absolute.map((i) => i.messageKey)).toContain('validation.archDirChars');
+    expect(absolute.map((i) => i.messageKey)).toContain('angular_project_generator_validation_arch_dir_chars');
   });
 
   it('rejects a reserved directory name', () => {
@@ -167,19 +167,19 @@ describe('validateArchitecture', () => {
     const issues = validateArchitecture(
       section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), groupingDir: 'assets' } }),
     );
-    expect(issues.map((i) => i.messageKey)).toContain('validation.archDirReserved');
+    expect(issues.map((i) => i.messageKey)).toContain('angular_project_generator_validation_arch_dir_reserved');
   });
 
   it('flags conflicting/duplicate directories case-insensitively', () => {
     const issues = validateArchitecture(
       section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), sharedDir: 'Core' } }),
     );
-    expect(issues.map((i) => i.messageKey)).toContain('validation.archDirDup');
+    expect(issues.map((i) => i.messageKey)).toContain('angular_project_generator_validation_arch_dir_dup');
   });
 
   it('validates a custom example name as a single safe segment', () => {
     const issues = validateArchitecture(section({ exampleName: 'not/a/segment' }));
-    expect(issues.map((i) => i.messageKey)).toContain('validation.archExampleName');
+    expect(issues.map((i) => i.messageKey)).toContain('angular_project_generator_validation_arch_example_name');
   });
 
   it('ignores the example name when the example toggle is off', () => {

@@ -11,8 +11,8 @@
     "@schematics/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush",
-      "addTypeToClassName": true,
-      "type": "component"
+      "addTypeToClassName": false,
+      "type": ""
     },
     "@schematics/angular:directive": {
       "addTypeToClassName": true,
@@ -45,7 +45,6 @@
             "ssr": {
               "entry": "src/server.ts"
             },
-            "prerender": true,
             "allowedCommonJsDependencies": ["jszip"],
             "polyfills": [],
             "tsConfig": "tsconfig.app.json",

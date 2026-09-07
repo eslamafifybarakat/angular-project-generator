@@ -14,85 +14,85 @@ const STEP_ROUTES: Routes = [
   {
     path: 'project',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/project-step.component').then(
-        (m) => m.ProjectStepComponent,
+      import('@domains/project-generator/presentation/steps/project-step').then(
+        (m) => m.ProjectStep,
       ),
   },
   {
     path: 'angular',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/angular-step.component').then(
-        (m) => m.AngularStepComponent,
+      import('@domains/project-generator/presentation/steps/angular-step').then(
+        (m) => m.AngularStep,
       ),
   },
   {
     path: 'architecture',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/architecture-step.component').then(
-        (m) => m.ArchitectureStepComponent,
+      import('@domains/project-generator/presentation/steps/architecture-step').then(
+        (m) => m.ArchitectureStep,
       ),
   },
   {
     path: 'styling',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/styling-step.component').then(
-        (m) => m.StylingStepComponent,
+      import('@domains/project-generator/presentation/steps/styling-step').then(
+        (m) => m.StylingStep,
       ),
   },
   {
     path: 'theme',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/theme-step.component').then(
-        (m) => m.ThemeStepComponent,
+      import('@domains/project-generator/presentation/steps/theme-step').then(
+        (m) => m.ThemeStep,
       ),
   },
   {
     path: 'languages',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/languages-step.component').then(
-        (m) => m.LanguagesStepComponent,
+      import('@domains/project-generator/presentation/steps/languages-step').then(
+        (m) => m.LanguagesStep,
       ),
   },
   {
     path: 'rendering',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/rendering-step.component').then(
-        (m) => m.RenderingStepComponent,
+      import('@domains/project-generator/presentation/steps/rendering-step').then(
+        (m) => m.RenderingStep,
       ),
   },
   {
     path: 'environments',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/environments-step.component').then(
-        (m) => m.EnvironmentsStepComponent,
+      import('@domains/project-generator/presentation/steps/environments-step').then(
+        (m) => m.EnvironmentsStep,
       ),
   },
   {
     path: 'features',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/features-step.component').then(
-        (m) => m.FeaturesStepComponent,
+      import('@domains/project-generator/presentation/steps/features-step').then(
+        (m) => m.FeaturesStep,
       ),
   },
   {
     path: 'tools',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/tools-step.component').then(
-        (m) => m.ToolsStepComponent,
+      import('@domains/project-generator/presentation/steps/tools-step').then(
+        (m) => m.ToolsStep,
       ),
   },
   {
     path: 'example',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/example-step.component').then(
-        (m) => m.ExampleStepComponent,
+      import('@domains/project-generator/presentation/steps/example-step').then(
+        (m) => m.ExampleStep,
       ),
   },
   {
     path: 'review',
     loadComponent: () =>
-      import('@domains/project-generator/presentation/steps/review-step.component').then(
-        (m) => m.ReviewStepComponent,
+      import('@domains/project-generator/presentation/steps/review-step').then(
+        (m) => m.ReviewStep,
       ),
   },
 ];
@@ -101,29 +101,29 @@ function localizedChildren(): Routes {
   return [
     {
       path: '',
-      loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent),
+      loadComponent: () => import('./home/home').then((m) => m.Home),
     },
     {
       path: 'new',
       loadComponent: () =>
-        import('@domains/project-generator/presentation/wizard/wizard.component').then(
-          (m) => m.WizardComponent,
+        import('@domains/project-generator/presentation/wizard/wizard').then(
+          (m) => m.Wizard,
         ),
       children: [{ path: '', redirectTo: 'project', pathMatch: 'full' }, ...STEP_ROUTES],
     },
     {
       path: 'generate',
       loadComponent: () =>
-        import('@domains/project-generator/presentation/generation/generation.component').then(
-          (m) => m.GenerationComponent,
+        import('@domains/project-generator/presentation/generation/generation').then(
+          (m) => m.Generation,
         ),
     },
     {
       path: 'ready',
       loadComponent: () =>
         import(
-          '@domains/project-generator/presentation/project-ready/project-ready.component'
-        ).then((m) => m.ProjectReadyComponent),
+          '@domains/project-generator/presentation/project-ready/project-ready'
+        ).then((m) => m.ProjectReady),
     },
   ];
 }
@@ -137,6 +137,6 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () =>
-      import('./not-found/not-found.component').then((m) => m.NotFoundComponent),
+      import('./not-found/not-found').then((m) => m.NotFound),
   },
 ];

@@ -1,0 +1,129 @@
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_render_h' | translate }}</h2>
+  <div class="options">
+    @for (mode of modes; track mode.value) {
+      <button
+        type="button"
+        class="option"
+        [attr.aria-pressed]="rendering().mode === mode.value"
+        (click)="setMode(mode.value)"
+      >
+        <span class="option__title">
+          {{ mode.label }}
+          @if (mode.value === 'ssr') {
+            <span class="badge badge--accent">{{ 'angular_project_generator_app_recommended' | translate }}</span>
+          }
+        </span>
+        <span class="option__desc">{{ mode.descKey | translate }}</span>
+      </button>
+    }
+  </div>
+</div>
+
+@if (configuration.isServerRendered()) {
+  <div class="group">
+    <label class="switch">
+      <input type="checkbox" [checked]="rendering().prerender" (change)="onPrerender($event)" />
+      <span class="track"></span>
+      <span class="check__text">
+        {{ 'angular_project_generator_app_prerender' | translate }}
+        <span class="check__sub">{{ 'angular_project_generator_app_prerender_d' | translate }}</span>
+      </span>
+    </label>
+
+    <div class="field" style="margin-top: 12px">
+      <span class="label">{{ 'angular_project_generator_app_hydration' | translate }}</span>
+      <div class="seg" role="group" [attr.aria-label]="'angular_project_generator_app_hydration' | translate">
+        <button
+          type="button"
+          [attr.aria-pressed]="rendering().hydrationStrategy === 'default'"
+          (click)="setHydration('default')"
+        >
+          {{ 'angular_project_generator_app_hyd_default' | translate }}
+        </button>
+        <button
+          type="button"
+          [disabled]="!eventReplayAvailable()"
+          [attr.aria-pressed]="rendering().hydrationStrategy === 'event-replay'"
+          (click)="setHydration('event-replay')"
+        >
+          {{ 'angular_project_generator_app_hyd_replay' | translate }}
+        </button>
+      </div>
+      @if (!eventReplayAvailable()) {
+        <p class="option__desc" style="margin-top: 6px">{{ 'angular_project_generator_app_hyd_replay_unavail' | translate }}</p>
+      }
+    </div>
+
+    @if (profile(); as p) {
+      <p class="option__desc" style="margin-top: 12px">
+        {{ 'angular_project_generator_app_col_ssr' | translate }}: <span class="mono ltr-run">{{ p.ssrPackage }}</span>
+      </p>
+    }
+  </div>
+
+  <div class="group">
+    <h2 class="group__head">{{ 'angular_project_generator_app_ssr_files_h' | translate }}</h2>
+    <div class="code">
+      <pre>@for (file of serverFiles(); track file) {{{ file }}
+}@if (rendering().prerender) {// every static route → RenderMode.Prerender}</pre>
+    </div>
+  </div>
+}
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_seo_h' | translate }}</h2>
+  <label class="switch">
+    <input type="checkbox" [checked]="seo().enabled" (change)="onSeoFlag('enabled', $event)" />
+    <span class="track"></span>
+    <span class="check__text">{{ 'angular_project_generator_app_seo_on' | translate }}</span>
+  </label>
+</div>
+
+@if (seo().enabled) {
+  <div class="group">
+    <label class="check">
+      <input type="checkbox" [checked]="seo().jsonLd" (change)="onSeoFlag('jsonLd', $event)" />
+      <span class="check__text">{{ 'angular_project_generator_app_seo_json_ld' | translate }}</span>
+    </label>
+    <label class="check">
+      <input type="checkbox" [checked]="seo().sitemap" (change)="onSeoFlag('sitemap', $event)" />
+      <span class="check__text">{{ 'angular_project_generator_app_seo_sitemap' | translate }}</span>
+    </label>
+
+    <div class="field-row" style="margin-top: 16px">
+      <div class="field">
+        <label class="label" for="seo-site-name">{{ 'angular_project_generator_app_seo_site' | translate }}</label>
+        <input
+          id="seo-site-name"
+          class="input"
+          [value]="seo().siteName"
+          (input)="onSeoText('siteName', $event)"
+        />
+      </div>
+      <div class="field">
+        <label class="label" for="seo-og">{{ 'angular_project_generator_app_seo_og' | translate }}</label>
+        <input
+          id="seo-og"
+          class="input mono"
+          dir="ltr"
+          [value]="seo().defaultOgImage"
+          (input)="onSeoText('defaultOgImage', $event)"
+        />
+      </div>
+    </div>
+
+    @if (showCsrJsonLdWarning()) {
+      <div class="note note--warn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+        </svg>
+        <div>
+          <b>{{ 'angular_project_generator_app_seo_json_ld' | translate }}.</b> {{ 'angular_project_generator_app_csr_json_ld_warn' | translate }}
+          <app-help headingKey="angular_project_generator_app_seo_json_ld" bodyKey="angular_project_generator_app_csr_json_ld_warn" />
+        </div>
+      </div>
+    }
+  </div>
+}

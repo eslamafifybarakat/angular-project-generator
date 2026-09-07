@@ -1,0 +1,124 @@
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_theme_src_h' | translate }}</h2>
+  <div class="options">
+    <button
+      type="button"
+      class="option"
+      [attr.aria-pressed]="theme().source === 'default'"
+      (click)="setSource('default')"
+    >
+      <span class="option__title">{{ 'angular_project_generator_app_src_default' | translate }}</span>
+      <span class="option__desc">{{ 'angular_project_generator_app_src_default_d' | translate }}</span>
+    </button>
+    <button
+      type="button"
+      class="option"
+      [attr.aria-pressed]="theme().source === 'template'"
+      (click)="setSource('template')"
+    >
+      <span class="option__title">{{ 'angular_project_generator_app_src_template' | translate }}</span>
+      <span class="option__desc">{{ 'angular_project_generator_app_src_template_d' | translate }}</span>
+    </button>
+  </div>
+
+  @if (theme().source === 'template') {
+    <div class="panel--inset" style="margin-top: 12px">
+      @for (key of ['angular_project_generator_app_tmpl_loaded', 'angular_project_generator_app_tmpl_readme', 'angular_project_generator_app_tmpl_mapped']; track key) {
+        <p class="option__desc" style="color: var(--ok)">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+            <path d="m20 6-11 11-5-5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          {{ key | translate }}
+        </p>
+      }
+    </div>
+  }
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_colors_h' | translate }}</h2>
+  <div class="stack">
+    @for (row of colorRows; track row.key) {
+      <div>
+        <div class="colorrow">
+          <span class="colorrow__name">{{ row.labelKey | translate }}</span>
+          <input
+            type="color"
+            class="colorrow__picker"
+            [value]="pickerValue(theme()[row.key])"
+            [attr.aria-label]="row.labelKey | translate"
+            (input)="onColor(row.key, $event)"
+          />
+          <input
+            class="input mono colorrow__hex"
+            dir="ltr"
+            [value]="theme()[row.key]"
+            [attr.aria-invalid]="issues(row.key).length > 0"
+            [attr.aria-label]="row.labelKey | translate"
+            (input)="onColor(row.key, $event)"
+          />
+        </div>
+        @if (scale(theme()[row.key]).length > 0) {
+          <div class="scale" aria-hidden="true">
+            @for (stop of scale(theme()[row.key]); track stop.step) {
+              <span
+                class="scale__stop"
+                [style.background]="stop.css"
+                [style.color]="stop.onLight ? '#111' : '#fff'"
+              >{{ stop.step }}</span>
+            }
+          </div>
+        }
+        @for (issue of issues(row.key); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    }
+  </div>
+  <p class="hint" style="margin-top: 10px">{{ 'angular_project_generator_app_scale_note' | translate }}</p>
+</div>
+
+<div class="group">
+  <h2 class="group__head">
+    {{ 'angular_project_generator_app_sync_h' | translate }}
+    <app-help headingKey="angular_project_generator_app_sync_h" bodyKey="angular_project_generator_app_sync_d" />
+  </h2>
+  <div class="code">
+    <pre>src/styles/_themes.scss
+src/index.html                 // inline no-flash script
+core/theme/theme.model.ts      // THEME_COLOR</pre>
+  </div>
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_advanced_h' | translate }}</h2>
+  <label class="switch">
+    <input type="checkbox" [checked]="theme().supportDualMode" (change)="onDualMode($event)" />
+    <span class="track"></span>
+    <span class="check__text">
+      {{ 'angular_project_generator_app_dual_mode' | translate }}
+      <span class="check__sub">{{ 'angular_project_generator_app_dual_mode_d' | translate }}</span>
+    </span>
+  </label>
+  <label class="switch">
+    <input type="checkbox" [checked]="theme().useDefaultScales" (change)="onDefaultScales($event)" />
+    <span class="track"></span>
+    <span class="check__text">
+      {{ 'angular_project_generator_app_use_defaults' | translate }}
+      <span class="check__sub">
+        {{ 'angular_project_generator_app_radii' | translate }} · {{ 'angular_project_generator_app_spacing' | translate }} ·
+        {{ 'angular_project_generator_app_breakpoints' | translate }}
+      </span>
+    </span>
+  </label>
+</div>
+
+<div class="group">
+  <div class="note note--info">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4M12 8h.01" stroke-linecap="round" />
+    </svg>
+    <div><b>{{ 'angular_project_generator_app_status_col_h' | translate }}.</b> {{ 'angular_project_generator_app_status_col_d' | translate }}</div>
+  </div>
+</div>

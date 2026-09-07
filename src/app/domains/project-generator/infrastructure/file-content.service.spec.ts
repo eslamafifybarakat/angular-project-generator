@@ -89,7 +89,9 @@ describe('FileContentService', () => {
     for (const code of ['en', 'ar', 'ru', 'zh']) {
       const locale = rendered.find((f) => f.path === `src/locales/${code}.json`);
       expect(locale, `missing locale file for ${code}`).toBeTruthy();
-      expect(() => JSON.parse(locale!.content)).not.toThrow();
+      expect(() => {
+        JSON.parse(locale!.content);
+      }).not.toThrow();
     }
   });
 

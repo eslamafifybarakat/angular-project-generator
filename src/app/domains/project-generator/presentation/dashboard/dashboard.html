@@ -1,0 +1,114 @@
+<div class="wrap">
+  <section class="hero">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__inner">
+      <p class="hero__chip">
+        <span>{{ 'angular_project_generator_app_chip_source' | translate }}</span>
+        <span class="mono ltr-run">angular22-ddd-starter</span>
+      </p>
+      <h1 class="hero__title">{{ 'angular_project_generator_app_hero_title' | translate }}</h1>
+      <p class="hero__body">{{ 'angular_project_generator_app_hero_body' | translate }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary btn--lg" [routerLink]="newLink()">
+          {{ 'angular_project_generator_app_cta_create' | translate }}
+        </a>
+        <button type="button" class="btn btn--lg" (click)="openImport()">
+          {{ 'angular_project_generator_app_cta_import' | translate }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="columns">
+    <section>
+      <h2 class="section__title">{{ 'angular_project_generator_app_recent_h' | translate }}</h2>
+      @if (recent().length > 0) {
+        <ul class="stack" style="gap: 8px">
+          @for (item of recent(); track item.slug) {
+            <li>
+              <button type="button" class="preset" (click)="reopen()">
+                <span class="preset__body">
+                  <span class="preset__name">{{ item.name }}</span>
+                  <span class="preset__desc mono ltr-run">
+                    {{ item.slug }}.zip · Angular {{ item.angularVersion }} ·
+                    {{ item.fileCount }}
+                  </span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="empty">
+          <h3>{{ 'angular_project_generator_app_recent_empty_h' | translate }}</h3>
+          <p>{{ 'angular_project_generator_app_recent_empty_p' | translate }}</p>
+          <a class="btn btn--primary" [routerLink]="newLink()">
+            {{ 'angular_project_generator_app_cta_create' | translate }}
+          </a>
+        </div>
+      }
+    </section>
+
+    <section>
+      <h2 class="section__title">{{ 'angular_project_generator_app_presets_h' | translate }}</h2>
+      <p class="hint presets__intro">{{ 'angular_project_generator_app_presets_sub' | translate }}</p>
+      <ul class="stack" style="gap: 8px">
+        @for (preset of presetList; track preset.id) {
+          <li>
+            <button type="button" class="preset" (click)="applyPreset(preset)">
+              <svg class="preset__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" stroke-linejoin="round" />
+              </svg>
+              <span class="preset__body">
+                <span class="preset__name">{{ preset.nameKey | translate }}</span>
+                <span class="preset__desc">{{ preset.descriptionKey | translate }}</span>
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+</div>
+
+@if (importOpen()) {
+  <app-modal [heading]="'angular_project_generator_app_import_h' | translate" (closed)="closeImport()">
+    <p class="hint">{{ 'angular_project_generator_app_import_p' | translate }}</p>
+    <label class="visually-hidden" for="import-config">{{ 'angular_project_generator_app_import_h' | translate }}</label>
+    <textarea
+      id="import-config"
+      class="textarea mono"
+      style="min-height: 180px; margin-top: 12px"
+      spellcheck="false"
+      [value]="importText()"
+      (input)="onImportInput($event)"
+    ></textarea>
+
+    @if (importProblems().length > 0) {
+      <div class="note note--err" style="margin-top: 12px">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+        </svg>
+        <div>
+          <b>{{ 'angular_project_generator_app_import_bad' | translate }}</b>
+          <ul style="margin-top: 6px">
+            @for (problem of importProblems(); track problem) {
+              <li>• {{ problem }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="btn" (click)="closeImport()">
+        {{ 'angular_project_generator_app_cancel' | translate }}
+      </button>
+      <button type="button" class="btn btn--primary" (click)="runImport()">
+        {{ 'angular_project_generator_app_import_do' | translate }}
+      </button>
+    </div>
+  </app-modal>
+}

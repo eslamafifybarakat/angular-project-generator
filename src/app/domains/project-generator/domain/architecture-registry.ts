@@ -207,16 +207,16 @@ function pushDirIssue(
   const trimmed = value.trim();
   if (trimmed.length === 0) {
     if (required) {
-      issues.push({ path, step: 'architecture', messageKey: 'validation.archDirEmpty' });
+      issues.push({ path, step: 'architecture', messageKey: 'angular_project_generator_validation_arch_dir_empty' });
     }
     return;
   }
   if (!isSafeRelativeDirPath(trimmed)) {
-    issues.push({ path, step: 'architecture', messageKey: 'validation.archDirChars' });
+    issues.push({ path, step: 'architecture', messageKey: 'angular_project_generator_validation_arch_dir_chars' });
     return;
   }
   if (RESERVED_DIR_NAMES.has(trimmed.toLowerCase())) {
-    issues.push({ path, step: 'architecture', messageKey: 'validation.archDirReserved' });
+    issues.push({ path, step: 'architecture', messageKey: 'angular_project_generator_validation_arch_dir_reserved' });
   }
 }
 
@@ -233,7 +233,7 @@ export function validateArchitecture(section: ArchitectureSection): ValidationIs
 
   if (section.includeExampleDomain && section.exampleName.trim().length > 0) {
     if (!isSafeDirectorySegment(section.exampleName.trim())) {
-      add('architecture.exampleName', 'validation.archExampleName');
+      add('architecture.exampleName', 'angular_project_generator_validation_arch_example_name');
     }
   }
 
@@ -266,7 +266,7 @@ export function validateArchitecture(section: ArchitectureSection): ValidationIs
     const key = entry.value.trim().toLowerCase().replace(/\\/g, '/');
     const existing = seen.get(key);
     if (existing) {
-      add(entry.path, 'validation.archDirDup');
+      add(entry.path, 'angular_project_generator_validation_arch_dir_dup');
     } else {
       seen.set(key, entry.path);
     }
