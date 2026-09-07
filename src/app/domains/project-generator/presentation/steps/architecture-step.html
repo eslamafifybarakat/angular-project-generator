@@ -1,0 +1,204 @@
+<div class="group">
+  <h2 class="group__head">
+    {{ 'angular_project_generator_app_arch_h' | translate }}
+    <app-help [headingKey]="helpHeadingKey()" [bodyKey]="helpBodyKey()" />
+  </h2>
+  <div class="options">
+    @for (profile of profiles; track profile.id) {
+      <button
+        type="button"
+        class="option"
+        [attr.aria-pressed]="architecture().pattern === profile.id"
+        (click)="select(profile.id)"
+      >
+        <span class="option__title">{{ profile.nameKey | translate }}</span>
+        <span class="option__desc">{{ profile.descriptionKey | translate }}</span>
+      </button>
+    }
+  </div>
+</div>
+
+@if (isCustom()) {
+  <div class="group">
+    <h2 class="group__head">{{ 'angular_project_generator_app_arch_custom' | translate }}</h2>
+
+    <div class="field">
+      <span class="label">{{ 'angular_project_generator_app_arch_custom_root' | translate }}</span>
+      <p class="mono ltr-run">src/app/</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="label" for="arch-core">{{ 'angular_project_generator_app_arch_custom_core' | translate }}</label>
+        <input
+          id="arch-core"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.coreDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.coreDir').length > 0"
+          (input)="onCustomField('coreDir', $event)"
+        />
+        @for (issue of issuesFor('architecture.custom.coreDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+      <div class="field">
+        <label class="label" for="arch-shared">{{ 'angular_project_generator_app_arch_custom_shared' | translate }}</label>
+        <input
+          id="arch-shared"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.sharedDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.sharedDir').length > 0"
+          (input)="onCustomField('sharedDir', $event)"
+        />
+        @for (issue of issuesFor('architecture.custom.sharedDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="label" for="arch-layout">{{ 'angular_project_generator_app_arch_custom_layout' | translate }}</label>
+        <input
+          id="arch-layout"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.layoutDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.layoutDir').length > 0"
+          (input)="onCustomField('layoutDir', $event)"
+        />
+        <p class="hint">{{ 'angular_project_generator_app_arch_optional_hint' | translate }}</p>
+        @for (issue of issuesFor('architecture.custom.layoutDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+      <div class="field">
+        <label class="label" for="arch-grouping">{{ 'angular_project_generator_app_arch_custom_grouping' | translate }}</label>
+        <input
+          id="arch-grouping"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.groupingDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.groupingDir').length > 0"
+          (input)="onCustomField('groupingDir', $event)"
+        />
+        <p class="hint">{{ 'angular_project_generator_app_arch_optional_hint' | translate }}</p>
+        @for (issue of issuesFor('architecture.custom.groupingDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="label">{{ 'angular_project_generator_app_arch_custom_grouping_label' | translate }}</span>
+      <div class="seg" role="group" [attr.aria-label]="'angular_project_generator_app_arch_custom_grouping_label' | translate">
+        <button
+          type="button"
+          [attr.aria-pressed]="architecture().custom.groupingLabel === 'domain'"
+          (click)="setGroupingLabel('domain')"
+        >
+          {{ 'angular_project_generator_app_arch_group_domain' | translate }}
+        </button>
+        <button
+          type="button"
+          [attr.aria-pressed]="architecture().custom.groupingLabel === 'feature'"
+          (click)="setGroupingLabel('feature')"
+        >
+          {{ 'angular_project_generator_app_arch_group_feature' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="label">{{ 'angular_project_generator_app_arch_custom_extra' | translate }}</span>
+      @for (dir of architecture().custom.additionalDirectories; track $index) {
+        <div class="kv">
+          <input
+            class="input mono"
+            dir="ltr"
+            [value]="dir"
+            (input)="updateDirectory($index, $event)"
+            [attr.aria-invalid]="issuesFor('architecture.custom.additionalDirectories.' + $index).length > 0"
+          />
+          <button
+            type="button"
+            class="btn btn--icon btn--danger"
+            [attr.aria-label]="'angular_project_generator_app_remove' | translate"
+            (click)="removeDirectory($index)"
+          >
+            ×
+          </button>
+        </div>
+        @for (issue of issuesFor('architecture.custom.additionalDirectories.' + $index); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      }
+      <button type="button" class="btn" (click)="addDirectory()">
+        + {{ 'angular_project_generator_app_add_dir' | translate }}
+      </button>
+    </div>
+  </div>
+}
+
+<div class="group">
+  @let group = groupLabelKey() | translate;
+  <h2 class="group__head">{{ 'angular_project_generator_app_ex_domain_h' | translate: { group } }}</h2>
+  <label class="switch">
+    <input
+      type="checkbox"
+      [checked]="architecture().includeExampleDomain"
+      (change)="toggleExample($event)"
+    />
+    <span class="track"></span>
+    <span class="check__text">
+      @if (architecture().includeExampleDomain) {
+        {{ 'angular_project_generator_app_ex_domain_d' | translate: { group } }}
+      } @else {
+        {{ 'angular_project_generator_app_ex_domain_off' | translate: { group } }}
+      }
+    </span>
+  </label>
+
+  @if (architecture().includeExampleDomain) {
+    <div class="field" style="margin-top: 12px">
+      <label class="label" for="arch-example-name">{{ 'angular_project_generator_app_example_name_h' | translate }}</label>
+      <input
+        id="arch-example-name"
+        class="input mono"
+        dir="ltr"
+        [value]="architecture().exampleName"
+        [attr.aria-invalid]="issuesFor('architecture.exampleName').length > 0"
+        (input)="onExampleName($event)"
+      />
+      <p class="hint">{{ 'angular_project_generator_app_example_name_hint' | translate }}</p>
+      @for (issue of issuesFor('architecture.exampleName'); track issue.messageKey) {
+        <p class="error">{{ issue.messageKey | translate }}</p>
+      }
+    </div>
+  }
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_tree_h' | translate }}</h2>
+  <div class="panel">
+    <ul class="tree">
+      @for (row of previewRows(); track $index) {
+        <li class="tree__row" [style.padding-inline-start.px]="indent(row.depth)">
+          @if (row.isDirectory) {
+            <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--accent)" stroke-width="2" aria-hidden="true">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-linejoin="round" />
+            </svg>
+          } @else {
+            <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--dim)" stroke-width="2" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" />
+              <path d="M14 3v5h5" stroke-linejoin="round" />
+            </svg>
+          }
+          <span class="mono ltr-run">{{ row.name }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="group">
+  <div class="options">
+    <button
+      type="button"
+      class="option"
+      [attr.aria-pressed]="!includeExample()"
+      (click)="set(false)"
+    >
+      <span class="option__title">{{ 'angular_project_generator_app_ex_none' | translate }}</span>
+      <span class="option__desc">{{ 'angular_project_generator_app_ex_none_d' | translate }}</span>
+    </button>
+    <button
+      type="button"
+      class="option"
+      [attr.aria-pressed]="includeExample()"
+      (click)="set(true)"
+    >
+      <span class="option__title">{{ 'angular_project_generator_app_ex_min' | translate }}</span>
+      <span class="option__desc">{{ 'angular_project_generator_app_ex_min_d' | translate }}</span>
+    </button>
+  </div>
+</div>
+
+@if (includeExample()) {
+  <div class="group">
+    <h2 class="group__head">
+      {{ 'angular_project_generator_app_ex_preview' | translate }}
+      <span class="badge badge--muted">{{ 'angular_project_generator_app_ex_label' | translate }}</span>
+    </h2>
+
+    <p class="hint" style="margin-bottom: 8px">
+      <span class="mono ltr-run">src/app/app.component.ts</span>
+    </p>
+    <div class="code">
+      <pre>&#64;Component(&#123; selector: 'app-root' &#125;)
+export class AppComponent &#123; &#125;</pre>
+    </div>
+
+    <p class="hint" style="margin: 12px 0 8px">
+      <span class="mono ltr-run">src/app/app.html</span>
+    </p>
+    <div class="code">
+      <pre>@for (line of templateLines(); track line) {{{ line }}
+}</pre>
+    </div>
+  </div>
+}

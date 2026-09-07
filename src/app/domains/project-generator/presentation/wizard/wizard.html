@@ -1,0 +1,202 @@
+<div class="mobilebar">
+  <p class="mobilebar__head">
+    <b>{{ stepTitleKey(currentStep()) | translate }}</b>
+    <span class="spacer mono ltr-run">{{ currentIndex() + 1 }}/{{ steps.length }}</span>
+  </p>
+  <ul class="chips">
+    @for (step of steps; track step) {
+      <li>
+        <a
+          class="chip"
+          [class.is-current]="step === currentStep()"
+          [class.is-done]="isVisited(step) && !hasIssues(step)"
+          [class.is-bad]="hasIssues(step)"
+          [routerLink]="stepLink(step)"
+          [attr.aria-label]="stepTitleKey(step) | translate"
+          (click)="markVisited(step)"
+        ></a>
+      </li>
+    }
+  </ul>
+</div>
+
+<div class="wizard">
+  <nav class="rail" [attr.aria-label]="'angular_project_generator_app_manifest_h' | translate">
+    <p class="rail__slug mono ltr-run">{{ configuration.config().project.slug || '—' }}</p>
+    <ul>
+      @for (step of steps; track step) {
+        <li>
+          <a
+            class="rail__step"
+            [class.is-current]="step === currentStep()"
+            [class.is-done]="isVisited(step) && step !== currentStep() && !hasIssues(step)"
+            [class.is-bad]="hasIssues(step)"
+            [routerLink]="stepLink(step)"
+            [attr.aria-current]="step === currentStep() ? 'step' : null"
+            (click)="markVisited(step)"
+          >
+            <span class="rail__num" aria-hidden="true">
+              @if (hasIssues(step)) {
+                !
+              } @else if (isVisited(step) && step !== currentStep()) {
+                ✓
+              } @else {
+                {{ stepNumber(step) }}
+              }
+            </span>
+            <span class="rail__label">{{ stepTitleKey(step) | translate }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <section class="work">
+    <header class="work__head">
+      <p class="work__kicker mono ltr-run">
+        {{ stepNumber(currentStep()) }} / {{ steps.length }}
+      </p>
+      <h1 class="work__title">{{ stepTitleKey(currentStep()) | translate }}</h1>
+      <p class="work__intro">{{ 'angular_project_generator_step_intro_' + currentStep() | translate }}</p>
+    </header>
+
+    <router-outlet />
+
+    <div class="navbar">
+      <button type="button" class="btn" (click)="previous()">
+        @if (currentIndex() === 0) {
+          {{ 'angular_project_generator_app_exit' | translate }}
+        } @else {
+          {{ 'angular_project_generator_app_back' | translate }}
+        }
+      </button>
+      <span class="spacer"></span>
+      <button type="button" class="btn" (click)="exportConfig()">
+        {{ 'angular_project_generator_app_export_cfg' | translate }}
+      </button>
+      @if (isLastStep()) {
+        <button
+          type="button"
+          class="btn btn--primary"
+          [disabled]="!configuration.isValid()"
+          (click)="generate()"
+        >
+          {{ 'angular_project_generator_app_generate_btn' | translate }}
+        </button>
+      } @else {
+        <button type="button" class="btn btn--primary" (click)="next()">
+          {{ 'angular_project_generator_app_next' | translate }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <aside
+    class="manifest"
+    [class.is-open]="manifestOpen()"
+    [attr.aria-label]="'angular_project_generator_app_manifest_h' | translate"
+  >
+    <div class="manifest__head">
+      <h2>{{ 'angular_project_generator_app_manifest_h' | translate }}</h2>
+      <button
+        type="button"
+        class="btn btn--ghost btn--icon manifest__close spacer"
+        [attr.aria-label]="'angular_project_generator_app_close' | translate"
+        (click)="toggleManifest()"
+      >
+        ×
+      </button>
+    </div>
+    <p class="hint">{{ 'angular_project_generator_app_manifest_sub' | translate }}</p>
+
+    @let cfg = configuration.config();
+    <ul class="manifest__list">
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('project')">
+          <span class="manifest__key mono ltr-run">{{ token.PROJECT_NAME }}</span>
+          <span class="manifest__value mono">{{ cfg.project.name || ('angular_project_generator_app_unset' | translate) }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('project')">
+          <span class="manifest__key mono ltr-run">{{ token.PROJECT_SLUG }}</span>
+          <span class="manifest__value mono ltr-run">{{ cfg.project.slug || ('angular_project_generator_app_unset' | translate) }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('angular')">
+          <span class="manifest__key mono ltr-run">{{ token.ANGULAR_VERSION }}</span>
+          <span class="manifest__value mono ltr-run">{{ cfg.angular.version }}</span>
+        </a>
+      </li>
+      <li class="manifest__divider"></li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('architecture')">
+          <span class="manifest__key mono ltr-run">architecture.pattern</span>
+          <span class="manifest__value mono ltr-run">{{ cfg.architecture.pattern }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('theme')">
+          <span class="manifest__key mono ltr-run">theme.source</span>
+          <span class="manifest__value mono ltr-run">
+            {{ cfg.theme.source === 'template' ? 'ddd-template' : 'generator-default' }}
+          </span>
+          <span class="swatches">
+            <span class="swatch" [style.background]="cfg.theme.primaryColor"></span>
+            <span class="swatch" [style.background]="cfg.theme.secondaryColor"></span>
+            <span class="swatch" [style.background]="cfg.theme.accentColor"></span>
+          </span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('languages')">
+          <span class="manifest__key mono ltr-run">{{ token.LANGUAGES }}</span>
+          <span class="manifest__value mono ltr-run">
+            {{ cfg.localization.enabled ? cfg.localization.selectedLanguages.join(', ') : '—' }}
+          </span>
+        </a>
+      </li>
+      <li class="manifest__divider"></li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('rendering')">
+          <span class="manifest__key mono ltr-run">{{ token.SSR_ENABLED }}</span>
+          <span class="manifest__value mono ltr-run">{{ configuration.isServerRendered() }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('environments')">
+          <span class="manifest__key mono ltr-run">environments</span>
+          <span class="manifest__value mono ltr-run">{{ cfg.environments.length }}</span>
+        </a>
+      </li>
+      <li>
+        <a class="manifest__row" [routerLink]="stepLink('features')">
+          <span class="manifest__key mono ltr-run">features.datePicker</span>
+          <span class="manifest__value mono ltr-run">{{ cfg.features.datePicker }}</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+</div>
+
+<div class="mobilenav">
+  <button type="button" class="btn" (click)="previous()">{{ 'angular_project_generator_app_back' | translate }}</button>
+  <button type="button" class="btn" (click)="toggleManifest()">
+    {{ 'angular_project_generator_app_manifest_h' | translate }}
+  </button>
+  @if (isLastStep()) {
+    <button
+      type="button"
+      class="btn btn--primary"
+      [disabled]="!configuration.isValid()"
+      (click)="generate()"
+    >
+      {{ 'angular_project_generator_app_generate_btn' | translate }}
+    </button>
+  } @else {
+    <button type="button" class="btn btn--primary" (click)="next()">
+      {{ 'angular_project_generator_app_next' | translate }}
+    </button>
+  }
+</div>

@@ -307,31 +307,31 @@ export class ProjectConfigService {
     };
 
     if (cfg.project.name.trim().length === 0) {
-      add('project.name', 'project', 'validation.name');
+      add('project.name', 'project', 'angular_project_generator_validation_name');
     } else if (!isDisplayName(cfg.project.name)) {
-      add('project.name', 'project', 'validation.nameChars');
+      add('project.name', 'project', 'angular_project_generator_validation_name_chars');
     }
     if (!isKebabSlug(cfg.project.slug)) {
-      add('project.slug', 'project', 'validation.slug');
+      add('project.slug', 'project', 'angular_project_generator_validation_slug');
     }
 
     if (!this.versions.find(cfg.angular.version)?.selectable) {
-      add('angular.version', 'angular', 'validation.angular');
+      add('angular.version', 'angular', 'angular_project_generator_validation_angular');
     }
 
     issues.push(...validateArchitecture(cfg.architecture));
 
     for (const key of ['primaryColor', 'secondaryColor', 'accentColor'] as const) {
       if (!isHexColor(cfg.theme[key])) {
-        add(`theme.${key}`, 'theme', 'validation.color');
+        add(`theme.${key}`, 'theme', 'angular_project_generator_validation_color');
       }
     }
 
     if (cfg.localization.enabled) {
       if (cfg.localization.selectedLanguages.length === 0) {
-        add('localization.selectedLanguages', 'languages', 'validation.langs');
+        add('localization.selectedLanguages', 'languages', 'angular_project_generator_validation_langs');
       } else if (!cfg.localization.selectedLanguages.includes(cfg.localization.defaultLanguage)) {
-        add('localization.defaultLanguage', 'languages', 'validation.defaultLang');
+        add('localization.defaultLanguage', 'languages', 'angular_project_generator_validation_default_lang');
       }
     }
 
@@ -339,24 +339,24 @@ export class ProjectConfigService {
     cfg.environments.forEach((env, index) => {
       const name = env.name.trim().toLowerCase();
       if (name.length === 0) {
-        add(`environments.${index}.name`, 'environments', 'validation.envName');
+        add(`environments.${index}.name`, 'environments', 'angular_project_generator_validation_env_name');
       } else if (seen.has(name)) {
-        add(`environments.${index}.name`, 'environments', 'validation.envDup');
+        add(`environments.${index}.name`, 'environments', 'angular_project_generator_validation_env_dup');
       } else {
         seen.add(name);
       }
       if (!isAbsoluteUrl(env.apiUrl)) {
-        add(`environments.${index}.apiUrl`, 'environments', 'validation.url');
+        add(`environments.${index}.apiUrl`, 'environments', 'angular_project_generator_validation_url');
       }
       if (!isAbsoluteUrl(env.siteUrl)) {
-        add(`environments.${index}.siteUrl`, 'environments', 'validation.url');
+        add(`environments.${index}.siteUrl`, 'environments', 'angular_project_generator_validation_url');
       }
     });
 
     // The date picker has no verified template, so 'customized' is rejected
     // outright rather than quietly downgraded to 'none'.
     if ((cfg.features.datePicker as string) === 'customized') {
-      add('features.datePicker', 'features', 'validation.datePicker');
+      add('features.datePicker', 'features', 'angular_project_generator_validation_date_picker');
     }
 
     return issues;

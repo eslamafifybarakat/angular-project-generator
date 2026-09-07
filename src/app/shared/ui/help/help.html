@@ -1,0 +1,26 @@
+<span class="help-wrap">
+  <button
+    type="button"
+    class="help"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="'angular_project_generator_app_help_more' | translate"
+    (click)="toggle()"
+    (keydown)="onKeydown($event)"
+  >
+    i
+  </button>
+  @if (open()) {
+    <span class="popover" role="dialog" [attr.aria-label]="headingKey() | translate">
+      <button
+        type="button"
+        class="popover__close"
+        [attr.aria-label]="'angular_project_generator_app_close' | translate"
+        (click)="close()"
+      >
+        ×
+      </button>
+      <h4>{{ headingKey() | translate }}</h4>
+      <p>{{ bodyKey() | translate }}</p>
+    </span>
+  }
+</span>

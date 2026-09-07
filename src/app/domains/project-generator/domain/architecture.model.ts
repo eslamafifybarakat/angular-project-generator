@@ -49,27 +49,27 @@ export interface ArchitectureProfile {
 export const ARCHITECTURE_PROFILES: Readonly<Record<ArchitectureType, ArchitectureProfile>> = {
   ddd: {
     id: 'ddd',
-    nameKey: 'app.archDdd',
-    descriptionKey: 'app.dddD',
-    helpBodyKey: 'app.archDddHelp',
+    nameKey: 'angular_project_generator_app_arch_ddd',
+    descriptionKey: 'angular_project_generator_app_ddd_d',
+    helpBodyKey: 'angular_project_generator_app_arch_ddd_help',
   },
   'feature-based': {
     id: 'feature-based',
-    nameKey: 'app.archFeature',
-    descriptionKey: 'app.featBasedD',
-    helpBodyKey: 'app.archFeatureHelp',
+    nameKey: 'angular_project_generator_app_arch_feature',
+    descriptionKey: 'angular_project_generator_app_feat_based_d',
+    helpBodyKey: 'angular_project_generator_app_arch_feature_help',
   },
   simple: {
     id: 'simple',
-    nameKey: 'app.archSimple',
-    descriptionKey: 'app.simpleD',
-    helpBodyKey: 'app.archSimpleHelp',
+    nameKey: 'angular_project_generator_app_arch_simple',
+    descriptionKey: 'angular_project_generator_app_simple_d',
+    helpBodyKey: 'angular_project_generator_app_arch_simple_help',
   },
   custom: {
     id: 'custom',
-    nameKey: 'app.archCustom',
-    descriptionKey: 'app.customD',
-    helpBodyKey: 'app.archCustomHelp',
+    nameKey: 'angular_project_generator_app_arch_custom',
+    descriptionKey: 'angular_project_generator_app_custom_d',
+    helpBodyKey: 'angular_project_generator_app_arch_custom_help',
   },
 } as const;
 

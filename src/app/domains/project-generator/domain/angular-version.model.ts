@@ -73,26 +73,26 @@ export const CAPABILITY_ROWS: readonly {
   >;
   readonly labelKey: string;
 }[] = [
-  { key: 'standalone', labelKey: 'app.cap.standalone' },
-  { key: 'signals', labelKey: 'app.cap.signals' },
-  { key: 'controlFlow', labelKey: 'app.cap.controlFlow' },
-  { key: 'defer', labelKey: 'app.cap.defer' },
-  { key: 'applicationBuilder', labelKey: 'app.cap.appBuilder' },
-  { key: 'hydration', labelKey: 'app.cap.hydration' },
-  { key: 'eventReplay', labelKey: 'app.cap.eventReplay' },
-  { key: 'incrementalHydration', labelKey: 'app.cap.incHydration' },
-  { key: 'zoneless', labelKey: 'app.cap.zoneless' },
+  { key: 'standalone', labelKey: 'angular_project_generator_app_cap_standalone' },
+  { key: 'signals', labelKey: 'angular_project_generator_app_cap_signals' },
+  { key: 'controlFlow', labelKey: 'angular_project_generator_app_cap_control_flow' },
+  { key: 'defer', labelKey: 'angular_project_generator_app_cap_defer' },
+  { key: 'applicationBuilder', labelKey: 'angular_project_generator_app_cap_app_builder' },
+  { key: 'hydration', labelKey: 'angular_project_generator_app_cap_hydration' },
+  { key: 'eventReplay', labelKey: 'angular_project_generator_app_cap_event_replay' },
+  { key: 'incrementalHydration', labelKey: 'angular_project_generator_app_cap_inc_hydration' },
+  { key: 'zoneless', labelKey: 'angular_project_generator_app_cap_zoneless' },
 ];
 
 export function statusBadge(status: FeatureStatus): { glyph: string; labelKey: string } {
   switch (status) {
     case 'default':
-      return { glyph: '✓', labelKey: 'app.status.default' };
+      return { glyph: '✓', labelKey: 'angular_project_generator_app_status_default' };
     case 'stable':
-      return { glyph: '✓', labelKey: 'app.status.stable' };
+      return { glyph: '✓', labelKey: 'angular_project_generator_app_status_stable' };
     case 'preview':
-      return { glyph: '◐', labelKey: 'app.status.preview' };
+      return { glyph: '◐', labelKey: 'angular_project_generator_app_status_preview' };
     default:
-      return { glyph: '✕', labelKey: 'app.status.unavailable' };
+      return { glyph: '✕', labelKey: 'angular_project_generator_app_status_unavailable' };
   }
 }

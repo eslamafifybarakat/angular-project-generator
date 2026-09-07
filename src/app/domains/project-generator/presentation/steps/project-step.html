@@ -1,0 +1,66 @@
+<div class="group">
+  <div class="field">
+    <label class="label" for="project-name">{{ 'angular_project_generator_app_f_name' | translate }}</label>
+    <input
+      id="project-name"
+      class="input"
+      [value]="project().name"
+      [attr.aria-invalid]="nameIssues().length > 0"
+      [attr.aria-describedby]="nameIssues().length > 0 ? 'project-name-error' : null"
+      (input)="onName($event)"
+    />
+    <p class="hint">{{ 'angular_project_generator_app_f_name_hint' | translate }}</p>
+    @for (issue of nameIssues(); track issue.messageKey) {
+      <p class="error" id="project-name-error">{{ issue.messageKey | translate }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-slug">
+      {{ 'angular_project_generator_app_f_slug' | translate }}
+      <app-help headingKey="angular_project_generator_app_f_slug" bodyKey="angular_project_generator_app_f_slug_hint" />
+    </label>
+    <input
+      id="project-slug"
+      class="input mono"
+      dir="ltr"
+      [value]="project().slug"
+      [attr.aria-invalid]="slugIssues().length > 0"
+      (input)="onSlug($event)"
+    />
+    @for (issue of slugIssues(); track issue.messageKey) {
+      <p class="error">{{ issue.messageKey | translate }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-description">{{ 'angular_project_generator_app_f_desc' | translate }}</label>
+    <textarea
+      id="project-description"
+      class="textarea"
+      [value]="project().description"
+      (input)="onDescription($event)"
+    ></textarea>
+    <p class="hint">{{ 'angular_project_generator_app_f_desc_hint' | translate }}</p>
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-type">{{ 'angular_project_generator_app_f_type' | translate }}</label>
+    <app-dropdown
+      dropdownId="project-type"
+      [options]="typeOptions"
+      [value]="project().type"
+      (valueChange)="onType($event)"
+    />
+    <p class="hint">{{ 'angular_project_generator_app_f_type_hint' | translate }}</p>
+  </div>
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'angular_project_generator_app_preview_h' | translate }}</h2>
+  <div class="code">
+    <pre>{{ 'angular_project_generator_app_p_display' | translate }}: {{ project().name || '—' }}
+{{ 'angular_project_generator_app_p_package' | translate }}: {{ project().slug || '—' }}
+{{ 'angular_project_generator_app_p_folder' | translate }}:  {{ project().slug || '—' }}/</pre>
+  </div>
+</div>
