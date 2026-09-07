@@ -28,6 +28,7 @@ export interface ProjectConfig {
   seo: SeoSection;
   environments: EnvironmentEntry[];
   features: FeatureSection;
+  coreCapabilities: CoreCapabilitiesSection;
   developerTools: DeveloperToolsSection;
 }
 
@@ -114,14 +115,28 @@ export interface EnvironmentEntry {
   extra: EnvironmentVariable[];
 }
 
-/** Toast and modal offer all three. The date picker never offers 'customized'. */
+/**
+ * All three UI-component features and all six Core Capabilities share this
+ * same tri-state shape, backed by the same ComponentTemplateRegistry —
+ * 'customized' means "a real, verified template exists and will be
+ * generated", never a placeholder. See component-template-registry.ts.
+ */
 export type FeatureChoice = 'none' | 'install-later' | 'customized';
-export type DatePickerChoice = 'none' | 'install-later';
 
 export interface FeatureSection {
   toast: FeatureChoice;
   modal: FeatureChoice;
-  datePicker: DatePickerChoice;
+  datePicker: FeatureChoice;
+}
+
+/** The six capabilities formerly listed as permanently "Planned" — now real, selectable templates. */
+export interface CoreCapabilitiesSection {
+  routingHelpers: FeatureChoice;
+  httpLayer: FeatureChoice;
+  errorHandling: FeatureChoice;
+  storage: FeatureChoice;
+  authentication: FeatureChoice;
+  authorization: FeatureChoice;
 }
 
 export interface DeveloperToolsSection {
@@ -278,6 +293,14 @@ export function defaultProjectConfig(): ProjectConfig {
       },
     ],
     features: { toast: 'customized', modal: 'customized', datePicker: 'install-later' },
+    coreCapabilities: {
+      routingHelpers: 'none',
+      httpLayer: 'none',
+      errorHandling: 'none',
+      storage: 'none',
+      authentication: 'none',
+      authorization: 'none',
+    },
     developerTools: {
       eslint: true,
       prettier: true,

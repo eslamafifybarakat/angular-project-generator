@@ -17,6 +17,7 @@ import './theme.templates';
 import './i18n.templates';
 import './seo.templates';
 import './environments.templates';
+import './component-templates.templates';
 import './features.templates';
 import './shared-scaffold.templates';
 import './example-domain.templates';

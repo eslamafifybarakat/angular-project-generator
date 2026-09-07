@@ -48,9 +48,12 @@ describe('ProjectConfigService', () => {
   it('leaves the current configuration untouched when an import is rejected', () => {
     const before = service.toJson();
     const result = service.importJson(
-      JSON.stringify({ features: { toast: 'none', modal: 'none', datePicker: 'customized' } }),
+      JSON.stringify({
+        angular: { version: '14' },
+        features: { toast: 'none', modal: 'none', datePicker: 'customized' },
+      }),
     );
-    expect(result.issues.map((issue) => issue.messageKey)).toContain('validation.datePicker');
+    expect(result.issues.map((issue) => issue.messageKey)).toContain('validation.templateEraIncompatible');
     expect(service.toJson()).toBe(before);
   });
 
@@ -192,6 +195,51 @@ describe('ProjectConfigService', () => {
       service.setAngularVersion('14');
       const paths = service.generatedFiles().map((f) => f.path);
       expect(paths).toContain('src/app/domains/my/presentation/my.module.ts');
+    });
+  });
+
+  describe('component templates', () => {
+    it('writes toast under the naming contract (no .component.ts suffix)', () => {
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths).toContain('src/app/shared/ui/toast/toast.ts');
+      expect(paths).toContain('src/app/shared/ui/toast/toast.service.ts');
+      expect(paths).not.toContain('src/app/shared/ui/toast/toast.component.ts');
+    });
+
+    it('date picker can now be copied as a template, and writes its files', () => {
+      service.patch('features', { datePicker: 'customized' });
+      expect(service.isValid()).toBe(true);
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths).toContain('src/app/shared/ui/date-picker/date-picker.ts');
+      expect(paths).toContain('src/app/shared/ui/date-picker/date-picker.spec.ts');
+    });
+
+    it('rejects date picker "customized" for a pre-standalone Angular version', () => {
+      service.setAngularVersion('14');
+      service.patch('features', { datePicker: 'customized' });
+      expect(service.issuesFor('features').map((i) => i.messageKey)).toContain(
+        'validation.templateEraIncompatible',
+      );
+    });
+
+    it('HTTP layer force-includes Error handling even when Error handling itself is "none"', () => {
+      service.patch('coreCapabilities', { httpLayer: 'customized', errorHandling: 'none' });
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths).toContain('src/app/core/http/api.service.ts');
+      expect(paths).toContain('src/app/core/error/app-error.model.ts');
+    });
+
+    it('Authorization transitively force-includes Authentication and Storage', () => {
+      service.patch('coreCapabilities', { authorization: 'customized' });
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths).toContain('src/app/core/auth/authorization.service.ts');
+      expect(paths).toContain('src/app/core/auth/auth.service.ts');
+      expect(paths).toContain('src/app/core/storage/storage.service.ts');
+    });
+
+    it('"none" core capabilities generate nothing', () => {
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths.some((p) => p.includes('/core/auth/') || p.includes('/core/http/'))).toBe(false);
     });
   });
 });

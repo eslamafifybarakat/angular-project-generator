@@ -8,12 +8,19 @@ import type { ValidationIssue } from '../domain/validation-issue.model';
 import type { GeneratedFile } from '../domain/generated-file.model';
 import type { ArchitectureType, CustomArchitectureConfig, ResolvedArchitecture } from '../domain/architecture.model';
 import { architectureExampleFiles, resolveArchitecture, validateArchitecture } from '../domain/architecture-registry';
+import type { TemplateCapabilityId, TemplateContext } from '../domain/component-template.model';
+import {
+  dependencyClosure,
+  isEraCompatible,
+  manifestFilePaths,
+} from '../infrastructure/templates/component-template-registry';
 import {
   DEVELOPER_TOOL_KEYS,
   defaultProjectConfig,
   fontsFor,
   languageMeta,
   type EnvironmentEntry,
+  type FeatureChoice,
   type ProjectConfig,
   type WizardStepId,
 } from '../domain/project-config.model';
@@ -298,6 +305,29 @@ export class ProjectConfigService {
     return next as unknown as ProjectConfig;
   }
 
+  // -- template registry ------------------------------------------------------
+
+  /**
+   * The nine ComponentTemplateRegistry-backed selections in one list, so
+   * validate() and deriveFiles() read the same source of truth instead of
+   * two independently-maintained switch statements drifting apart.
+   */
+  private templateEntries(
+    cfg: ProjectConfig,
+  ): readonly { id: TemplateCapabilityId; choice: FeatureChoice; path: string }[] {
+    return [
+      { id: 'toast', choice: cfg.features.toast, path: 'features.toast' },
+      { id: 'modal', choice: cfg.features.modal, path: 'features.modal' },
+      { id: 'date-picker', choice: cfg.features.datePicker, path: 'features.datePicker' },
+      { id: 'routing-helpers', choice: cfg.coreCapabilities.routingHelpers, path: 'coreCapabilities.routingHelpers' },
+      { id: 'http-layer', choice: cfg.coreCapabilities.httpLayer, path: 'coreCapabilities.httpLayer' },
+      { id: 'error-handling', choice: cfg.coreCapabilities.errorHandling, path: 'coreCapabilities.errorHandling' },
+      { id: 'storage', choice: cfg.coreCapabilities.storage, path: 'coreCapabilities.storage' },
+      { id: 'authentication', choice: cfg.coreCapabilities.authentication, path: 'coreCapabilities.authentication' },
+      { id: 'authorization', choice: cfg.coreCapabilities.authorization, path: 'coreCapabilities.authorization' },
+    ];
+  }
+
   // -- validation -----------------------------------------------------------
 
   private validate(cfg: ProjectConfig): ValidationIssue[] {
@@ -353,10 +383,18 @@ export class ProjectConfigService {
       }
     });
 
-    // The date picker has no verified template, so 'customized' is rejected
-    // outright rather than quietly downgraded to 'none'.
-    if ((cfg.features.datePicker as string) === 'customized') {
-      add('features.datePicker', 'features', 'validation.datePicker');
+    // 'customized' is only ever offered by the UI for templates the current
+    // Angular version's era can actually run (see isTemplateAvailable() /
+    // features-step.component.ts) — this re-checks the same rule server-side
+    // of the UI, e.g. against an imported JSON config or a version switch
+    // made after a template was already selected.
+    {
+      const era = this.versions.find(cfg.angular.version)?.era ?? 'standalone-modern';
+      for (const entry of this.templateEntries(cfg)) {
+        if (entry.choice === 'customized' && !isEraCompatible(entry.id, era)) {
+          add(entry.path, 'features', 'validation.templateEraIncompatible');
+        }
+      }
     }
 
     return issues;
@@ -459,13 +497,29 @@ export class ProjectConfigService {
       }
     });
 
-    if (cfg.features.toast === 'customized') {
-      add(`src/app/${sharedDir}/ui/toast/toast.component.ts`, 'features/toast');
-      add(`src/app/${sharedDir}/ui/toast/toast.service.ts`, 'features/toast');
-    }
-    if (cfg.features.modal === 'customized') {
-      add(`src/app/${sharedDir}/ui/modal/modal.component.ts`, 'features/modal');
-      add(`src/app/${sharedDir}/directives/focus-trap.directive.ts`, 'features/modal');
+    // Every "Copy template" selection (toast/modal/date-picker plus the six
+    // Core Capabilities) resolves through the same ComponentTemplateRegistry
+    // — dependencyClosure() pulls in force-included dependencies (Modal's
+    // focus-trap, HTTP layer's Error handling, Authentication's Storage,
+    // Authorization's Authentication) even when the dependency's own choice
+    // is 'none', so a generated file never imports something that was not
+    // also generated.
+    {
+      const templateCtx: TemplateContext = {
+        projectName: cfg.project.name,
+        projectSlug: cfg.project.slug,
+        sharedDir,
+        coreDir,
+        stylesheetExtension: cfg.styling.preprocessor,
+      };
+      const selected: TemplateCapabilityId[] = this.templateEntries(cfg)
+        .filter((entry) => entry.choice === 'customized' && isEraCompatible(entry.id, era))
+        .map((entry) => entry.id);
+      for (const id of dependencyClosure(selected)) {
+        for (const path of manifestFilePaths(id, templateCtx)) {
+          add(path, `capability/${id}`);
+        }
+      }
     }
 
     add(`src/app/${sharedDir}/utils/slugify.ts`, `architecture/${resolved.pattern}`);
