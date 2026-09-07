@@ -29,15 +29,15 @@
     </h2>
 
     <p class="hint" style="margin-bottom: 8px">
-      <span class="mono ltr-run">src/app/app.component.ts</span>
+      <span class="mono ltr-run">{{ appTsPath() }}</span>
     </p>
     <div class="code">
       <pre>&#64;Component(&#123; selector: 'app-root' &#125;)
-export class AppComponent &#123; &#125;</pre>
+export class {{ appClassName() }} &#123; &#125;</pre>
     </div>
 
     <p class="hint" style="margin: 12px 0 8px">
-      <span class="mono ltr-run">src/app/app.html</span>
+      <span class="mono ltr-run">{{ appHtmlPath() }}</span>
     </p>
     <div class="code">
       <pre>@for (line of templateLines(); track line) {{{ line }}

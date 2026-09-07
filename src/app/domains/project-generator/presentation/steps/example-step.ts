@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslatePipe } from '@core/i18n';
 import { ProjectConfigService } from '../../application';
+import { componentClassName, componentFileStem, componentNamingFor } from '../../domain';
 
 @Component({
   selector: 'app-example-step',
@@ -19,6 +20,13 @@ export class ExampleStep {
   protected readonly includeExample = computed(
     () => this.configuration.config().architecture.includeExampleDomain,
   );
+
+  /** Naming follows the selected Angular version (see `domain/naming.ts`),
+   * so this preview never shows a file name the generator wouldn't actually write. */
+  private readonly naming = computed(() => componentNamingFor(this.configuration.config().angular.version));
+  protected readonly appTsPath = computed(() => `src/app/${componentFileStem('app', this.naming())}.ts`);
+  protected readonly appHtmlPath = computed(() => `src/app/${componentFileStem('app', this.naming())}.html`);
+  protected readonly appClassName = computed(() => componentClassName('app', this.naming()));
 
   /** Template lines, built from the features actually selected. */
   protected readonly templateLines = computed(() => {
