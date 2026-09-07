@@ -29,7 +29,7 @@ export type TemplateCapabilityId =
 export type TemplateOrigin = 'extracted' | 'authored';
 
 /** Resolved once per generation from ProjectConfig + ResolvedArchitecture. */
-export interface TemplateContext {
+export interface CapabilityTemplateContext {
   readonly projectName: string;
   readonly projectSlug: string;
   /** Resolved architecture's shared-code folder, e.g. 'shared'. */
@@ -46,7 +46,7 @@ export interface TemplateFile {
    * in for the resolved stylesheet extension — resolved via `resolvedPath()`.
    */
   readonly relativePath: string;
-  readonly content: (ctx: TemplateContext) => string;
+  readonly content: (ctx: CapabilityTemplateContext) => string;
 }
 
 export interface TemplateManifest {
@@ -82,7 +82,7 @@ export interface TemplateManifest {
   readonly installLater: { readonly package: string; readonly note: string };
 }
 
-export function resolvedPath(file: TemplateFile, ctx: TemplateContext): string {
+export function resolvedPath(file: TemplateFile, ctx: CapabilityTemplateContext): string {
   return `src/app/${file.relativePath
     .replace('{shared}', ctx.sharedDir)
     .replace('{core}', ctx.coreDir)

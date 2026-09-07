@@ -1,4 +1,4 @@
-import type { TemplateContext as CapabilityTemplateContext } from '../../domain/component-template.model';
+import type { CapabilityTemplateContext } from '../../domain/component-template.model';
 import { registerContentResolver } from './content-registry';
 import { contentForPath } from './component-template-registry';
 import type { TemplateContext } from './template-context.model';

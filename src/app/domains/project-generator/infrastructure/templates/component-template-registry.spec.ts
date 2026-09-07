@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { TemplateContext } from '../../domain/component-template.model';
+import type { CapabilityTemplateContext } from '../../domain/component-template.model';
 import {
   componentTemplateRegistry,
   contentForPath,
@@ -8,7 +8,7 @@ import {
   manifestFilePaths,
 } from './component-template-registry';
 
-const ctx: TemplateContext = {
+const ctx: CapabilityTemplateContext = {
   projectName: 'My Project',
   projectSlug: 'my-project',
   sharedDir: 'shared',
@@ -47,7 +47,7 @@ describe('componentTemplateRegistry', () => {
     const paths = manifestFilePaths('toast', ctx);
     expect(paths).toContain('src/app/shared/ui/toast/toast.ts');
 
-    const customCtx: TemplateContext = { ...ctx, sharedDir: 'common', coreDir: 'kernel' };
+    const customCtx: CapabilityTemplateContext = { ...ctx, sharedDir: 'common', coreDir: 'kernel' };
     expect(manifestFilePaths('storage', customCtx)).toContain('src/app/kernel/storage/storage.service.ts');
   });
 

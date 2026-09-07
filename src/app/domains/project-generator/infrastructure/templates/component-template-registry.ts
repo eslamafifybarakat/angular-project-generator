@@ -1,7 +1,7 @@
 import {
   resolvedPath,
+  type CapabilityTemplateContext,
   type TemplateCapabilityId,
-  type TemplateContext,
   type TemplateManifest,
 } from '../../domain/component-template.model';
 import { authenticationManifest } from './authentication.templates';
@@ -53,12 +53,12 @@ export function dependencyClosure(ids: readonly TemplateCapabilityId[]): Templat
 }
 
 /** Every generated file path a template (and its own file list only, not its capability dependencies) produces. */
-export function manifestFilePaths(id: TemplateCapabilityId, ctx: TemplateContext): string[] {
+export function manifestFilePaths(id: TemplateCapabilityId, ctx: CapabilityTemplateContext): string[] {
   return componentTemplateRegistry[id].files.map((file) => resolvedPath(file, ctx));
 }
 
 /** Looks up real file content for a path this registry is responsible for, or undefined if no template owns it. */
-export function contentForPath(path: string, ctx: TemplateContext): string | undefined {
+export function contentForPath(path: string, ctx: CapabilityTemplateContext): string | undefined {
   for (const manifest of Object.values(componentTemplateRegistry)) {
     for (const file of manifest.files) {
       if (resolvedPath(file, ctx) === path) {

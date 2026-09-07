@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { slugify, isAbsoluteUrl, isDisplayName, isHexColor, isKebabSlug } from '@shared/utils';
 import { AngularVersionRepository } from '../infrastructure';
-import type { TemplateCapabilityId, TemplateContext } from '../domain/component-template.model';
+import type { TemplateCapabilityId, CapabilityTemplateContext } from '../domain/component-template.model';
 import {
   dependencyClosure,
   isEraCompatible,
@@ -509,7 +509,7 @@ export class ProjectConfigService {
     // is 'none', so a generated file never imports something that was not
     // also generated.
     {
-      const templateCtx: TemplateContext = {
+      const templateCtx: CapabilityTemplateContext = {
         projectName: cfg.project.name,
         projectSlug: cfg.project.slug,
         sharedDir,
