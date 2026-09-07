@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { resolveContent, type TemplateContext } from './templates';
 import { AngularVersionRepository } from './angular-version.repository';
-import { resolveArchitecture, type GeneratedFile, type ProjectConfig } from '../domain';
+import { componentNamingFor, resolveArchitecture, type GeneratedFile, type ProjectConfig } from '../domain';
 
 /**
  * Turns the derived `GeneratedFile[]` path list into real file contents.
@@ -28,6 +28,7 @@ export class FileContentService {
       ssr: cfg.rendering.mode === 'ssr' || cfg.rendering.mode === 'hybrid',
       npmScripts,
       files,
+      naming: componentNamingFor(cfg.angular.version),
     };
   }
 

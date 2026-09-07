@@ -3,6 +3,8 @@ import { slugify, isAbsoluteUrl, isDisplayName, isHexColor, isKebabSlug } from '
 import { AngularVersionRepository } from '../infrastructure';
 import {
   architectureExampleFiles,
+  componentFileStem,
+  componentNamingFor,
   resolveArchitecture,
   validateArchitecture,
   DEVELOPER_TOOL_KEYS,
@@ -378,6 +380,9 @@ export class ProjectConfigService {
     const standaloneEra = era === 'standalone-modern';
     const resolved = resolveArchitecture(cfg.architecture, cfg.project.slug);
     const { coreDir, sharedDir, layoutFilesDir } = resolved;
+    const naming = componentNamingFor(cfg.angular.version);
+    const includeTests = cfg.developerTools.unit;
+    const appStem = componentFileStem('app', naming);
 
     for (const path of [
       'package.json',
@@ -385,11 +390,15 @@ export class ProjectConfigService {
       'tsconfig.json',
       'README.md',
       'src/index.html',
+      'public/favicon.svg',
       'src/main.ts',
-      'src/app/app.component.ts',
-      'src/app/app.component.html',
+      `src/app/${appStem}.ts`,
+      `src/app/${appStem}.html`,
     ]) {
       add(path, 'scaffold');
+    }
+    if (includeTests) {
+      add(`src/app/${appStem}.spec.ts`, 'scaffold');
     }
 
     if (standaloneEra) {
@@ -464,20 +473,34 @@ export class ProjectConfigService {
     });
 
     if (cfg.features.toast === 'customized') {
-      add(`src/app/${sharedDir}/ui/toast/toast.component.ts`, 'features/toast');
+      const toastStem = componentFileStem('toast', naming);
+      add(`src/app/${sharedDir}/ui/toast/${toastStem}.ts`, 'features/toast');
+      if (includeTests) {
+        add(`src/app/${sharedDir}/ui/toast/${toastStem}.spec.ts`, 'features/toast');
+      }
       add(`src/app/${sharedDir}/ui/toast/toast.service.ts`, 'features/toast');
     }
     if (cfg.features.modal === 'customized') {
-      add(`src/app/${sharedDir}/ui/modal/modal.component.ts`, 'features/modal');
+      const modalStem = componentFileStem('modal', naming);
+      add(`src/app/${sharedDir}/ui/modal/${modalStem}.ts`, 'features/modal');
+      if (includeTests) {
+        add(`src/app/${sharedDir}/ui/modal/${modalStem}.spec.ts`, 'features/modal');
+      }
       add(`src/app/${sharedDir}/directives/focus-trap.directive.ts`, 'features/modal');
     }
 
     add(`src/app/${sharedDir}/utils/slugify.ts`, `architecture/${resolved.pattern}`);
-    add(`src/app/${layoutFilesDir}/header/header.component.ts`, `architecture/${resolved.pattern}`);
-    add(`src/app/${layoutFilesDir}/footer/footer.component.ts`, `architecture/${resolved.pattern}`);
+    const headerStem = componentFileStem('header', naming);
+    const footerStem = componentFileStem('footer', naming);
+    add(`src/app/${layoutFilesDir}/header/${headerStem}.ts`, `architecture/${resolved.pattern}`);
+    add(`src/app/${layoutFilesDir}/footer/${footerStem}.ts`, `architecture/${resolved.pattern}`);
+    if (includeTests) {
+      add(`src/app/${layoutFilesDir}/header/${headerStem}.spec.ts`, `architecture/${resolved.pattern}`);
+      add(`src/app/${layoutFilesDir}/footer/${footerStem}.spec.ts`, `architecture/${resolved.pattern}`);
+    }
 
     if (cfg.architecture.includeExampleDomain) {
-      for (const file of architectureExampleFiles(resolved, era)) {
+      for (const file of architectureExampleFiles(resolved, era, naming, includeTests)) {
         add(file.path, file.reason);
       }
     }

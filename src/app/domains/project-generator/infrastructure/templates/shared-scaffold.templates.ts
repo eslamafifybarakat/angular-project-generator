@@ -1,4 +1,5 @@
 import { registerContentResolver } from './content-registry';
+import { basicComponentSpec, componentClassName, componentFileStem } from './template-context.model';
 import type { TemplateContext } from './template-context.model';
 
 /** `shared/utils/slugify.ts` and the `layout/header`/`layout/footer` shell
@@ -24,7 +25,8 @@ export function slugify(input: string): string {
 }
 
 function headerComponentTs(ctx: TemplateContext): string {
-  const { cfg } = ctx;
+  const { cfg, naming } = ctx;
+  const className = componentClassName('header', naming);
   const name = cfg.project.name || 'App';
   const hasTheme = cfg.theme.supportDualMode;
   const hasLang = cfg.localization.enabled;
@@ -58,10 +60,18 @@ ${hasTheme ? '        <button type="button" (click)="theme.toggle()">Toggle them
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {
+export class ${className} {
 ${inject.join('\n')}
 }
 `;
+}
+
+function headerComponentSpec(ctx: TemplateContext): string {
+  // Uses routerLink, so component creation needs a Router provider.
+  return basicComponentSpec('header', ctx.naming, {
+    providers: ['provideRouter([])'],
+    providerImportLines: [`import { provideRouter } from '@angular/router';`],
+  });
 }
 
 function escapeTemplate(value: string): string {
@@ -69,6 +79,7 @@ function escapeTemplate(value: string): string {
 }
 
 function footerComponentTs(ctx: TemplateContext): string {
+  const className = componentClassName('footer', ctx.naming);
   const name = ctx.cfg.project.name || 'App';
   const year = new Date().getFullYear();
   return `import { ChangeDetectionStrategy, Component } from '@angular/core';
@@ -85,13 +96,21 @@ function footerComponentTs(ctx: TemplateContext): string {
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FooterComponent {}
+export class ${className} {}
 `;
 }
 
+function footerComponentSpec(ctx: TemplateContext): string {
+  return basicComponentSpec('footer', ctx.naming);
+}
+
 registerContentResolver((path, ctx) => {
+  const headerStem = componentFileStem('header', ctx.naming);
+  const footerStem = componentFileStem('footer', ctx.naming);
   if (path.endsWith('/utils/slugify.ts')) return slugifyTs();
-  if (path.endsWith('/header/header.component.ts')) return headerComponentTs(ctx);
-  if (path.endsWith('/footer/footer.component.ts')) return footerComponentTs(ctx);
+  if (path.endsWith(`/header/${headerStem}.ts`)) return headerComponentTs(ctx);
+  if (path.endsWith(`/header/${headerStem}.spec.ts`)) return headerComponentSpec(ctx);
+  if (path.endsWith(`/footer/${footerStem}.ts`)) return footerComponentTs(ctx);
+  if (path.endsWith(`/footer/${footerStem}.spec.ts`)) return footerComponentSpec(ctx);
   return undefined;
 });

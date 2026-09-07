@@ -1,4 +1,6 @@
 import { registerContentResolver } from './content-registry';
+import { basicComponentSpec, componentClassName, componentFileStem } from './template-context.model';
+import type { TemplateContext } from './template-context.model';
 
 /**
  * Toast and modal, adapted from `angular22-ddd-starter`'s `shared/ui/*`.
@@ -10,7 +12,8 @@ import { registerContentResolver } from './content-registry';
  * the archive never writes.
  */
 
-function toastComponentTs(): string {
+function toastComponentTs(ctx: TemplateContext): string {
+  const className = componentClassName('toast', ctx.naming);
   return `import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from './toast.service';
 
@@ -39,10 +42,14 @@ import { ToastService } from './toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents' },
 })
-export class ToastComponent {
+export class ${className} {
   protected readonly toast = inject(ToastService);
 }
 `;
+}
+
+function toastComponentSpec(ctx: TemplateContext): string {
+  return basicComponentSpec('toast', ctx.naming);
 }
 
 function toastServiceTs(): string {
@@ -69,7 +76,8 @@ export class ToastService {
 `;
 }
 
-function modalComponentTs(): string {
+function modalComponentTs(ctx: TemplateContext): string {
+  const className = componentClassName('modal', ctx.naming);
   return `import { DOCUMENT, ChangeDetectionStrategy, Component, HostListener, effect, inject, input, output } from '@angular/core';
 import { FocusTrapDirective } from '../../directives/focus-trap.directive';
 
@@ -108,7 +116,7 @@ let nextId = 0;
   \`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalComponent {
+export class ${className} {
   readonly open = input(false);
   readonly openChange = output<boolean>();
   readonly closeLabel = input.required<string>();
@@ -134,6 +142,12 @@ export class ModalComponent {
   }
 }
 `;
+}
+
+function modalComponentSpec(ctx: TemplateContext): string {
+  // closeLabel is a required input — TestBed must set it before the first
+  // change detection or Angular throws NG0950.
+  return basicComponentSpec('modal', ctx.naming, { requiredInputs: { closeLabel: 'Close' } });
 }
 
 function focusTrapDirectiveTs(): string {
@@ -195,10 +209,14 @@ export class FocusTrapDirective {
 `;
 }
 
-registerContentResolver((path) => {
-  if (path.endsWith('/ui/toast/toast.component.ts')) return toastComponentTs();
+registerContentResolver((path, ctx) => {
+  const toastStem = componentFileStem('toast', ctx.naming);
+  const modalStem = componentFileStem('modal', ctx.naming);
+  if (path.endsWith(`/ui/toast/${toastStem}.ts`)) return toastComponentTs(ctx);
+  if (path.endsWith(`/ui/toast/${toastStem}.spec.ts`)) return toastComponentSpec(ctx);
   if (path.endsWith('/ui/toast/toast.service.ts')) return toastServiceTs();
-  if (path.endsWith('/ui/modal/modal.component.ts')) return modalComponentTs();
+  if (path.endsWith(`/ui/modal/${modalStem}.ts`)) return modalComponentTs(ctx);
+  if (path.endsWith(`/ui/modal/${modalStem}.spec.ts`)) return modalComponentSpec(ctx);
   if (path.endsWith('/directives/focus-trap.directive.ts')) return focusTrapDirectiveTs();
   return undefined;
 });

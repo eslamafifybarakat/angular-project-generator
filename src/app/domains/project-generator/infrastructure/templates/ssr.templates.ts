@@ -1,5 +1,5 @@
 import { registerContentResolver } from './content-registry';
-import { toClassName } from './template-context.model';
+import { componentClassName, componentFileStem, toClassName } from './template-context.model';
 import type { TemplateContext } from './template-context.model';
 
 /**
@@ -12,15 +12,17 @@ import type { TemplateContext } from './template-context.model';
 
 function mainServerTs(ctx: TemplateContext): string {
   if (ctx.standalone) {
+    const appStem = componentFileStem('app', ctx.naming);
+    const appClass = componentClassName('app', ctx.naming);
     return `import { bootstrapApplication } from '@angular/platform-browser';
 import type { BootstrapContext } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
+import { ${appClass} } from './app/${appStem}';
 import { config } from './app/app.config.server';
 
 // A BootstrapContext must be threaded through here, or route extraction
 // fails during prerendering with "NG0401: Missing Platform" — a gotcha the
 // Angular 22 CLI's own SSR scaffold does not surface until it's hit.
-const bootstrap = (context: BootstrapContext) => bootstrapApplication(AppComponent, config, context);
+const bootstrap = (context: BootstrapContext) => bootstrapApplication(${appClass}, config, context);
 
 export default bootstrap;
 `;

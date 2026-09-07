@@ -110,7 +110,8 @@ describe('ProjectConfigService', () => {
     it('writes the DDD domain slice by default', () => {
       const paths = service.generatedFiles().map((f) => f.path);
       expect(paths).toContain('src/app/domains/my/domain/my.model.ts');
-      expect(paths).toContain('src/app/domains/my/presentation/overview/overview.component.ts');
+      // Default Angular version is 22, which uses the modern, suffix-free naming.
+      expect(paths).toContain('src/app/domains/my/presentation/overview/overview.ts');
       expect(service.resolvedArchitecture().groupingLabel).toBe('domain');
     });
 
@@ -126,9 +127,9 @@ describe('ProjectConfigService', () => {
     it('writes a flat pages/components/services/models tree for Simple, never DDD layers', () => {
       service.setArchitecturePattern('simple');
       const paths = service.generatedFiles().map((f) => f.path);
-      expect(paths).toContain('src/app/pages/my/my.component.ts');
+      expect(paths).toContain('src/app/pages/my/my.ts');
       expect(paths).toContain('src/app/services/my.service.ts');
-      expect(paths).toContain(`src/app/${service.resolvedArchitecture().layoutFilesDir}/header/header.component.ts`);
+      expect(paths).toContain(`src/app/${service.resolvedArchitecture().layoutFilesDir}/header/header.ts`);
       expect(service.resolvedArchitecture().layoutFilesDir).toBe('components');
       expect(paths.some((p) => p.includes('/domain/') || p.includes('/infrastructure/'))).toBe(
         false,
@@ -141,7 +142,28 @@ describe('ProjectConfigService', () => {
       const paths = service.generatedFiles().map((f) => f.path);
       expect(paths).toContain('src/app/kernel/theme/theme.model.ts');
       expect(paths).toContain('src/app/common/utils/slugify.ts');
-      expect(paths).toContain('src/app/modules/my/my.component.ts');
+      expect(paths).toContain('src/app/modules/my/my.ts');
+    });
+
+    it('uses the classic, suffix-based naming for Angular versions before 21', () => {
+      service.setAngularVersion('20');
+      const paths = service.generatedFiles().map((f) => f.path);
+      expect(paths).toContain('src/app/app.component.ts');
+      expect(paths).toContain('src/app/domains/my/presentation/overview/overview.component.ts');
+      expect(paths).toContain(`src/app/${service.resolvedArchitecture().layoutFilesDir}/header/header.component.ts`);
+      expect(paths).not.toContain('src/app/app.ts');
+    });
+
+    it('emits a matching .spec.ts next to every component only when unit testing is on', () => {
+      service.patch('developerTools', { unit: false });
+      const withoutTests = service.generatedFiles().map((f) => f.path);
+      expect(withoutTests.some((p) => p.endsWith('.spec.ts'))).toBe(false);
+
+      service.patch('developerTools', { unit: true });
+      const withTests = service.generatedFiles().map((f) => f.path);
+      expect(withTests).toContain('src/app/app.spec.ts');
+      expect(withTests).toContain(`src/app/${service.resolvedArchitecture().layoutFilesDir}/header/header.spec.ts`);
+      expect(withTests).toContain('src/app/domains/my/presentation/overview/overview.spec.ts');
     });
 
     it('drops the example slice entirely when the toggle is off, regardless of pattern', () => {
