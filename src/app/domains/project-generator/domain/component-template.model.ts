@@ -1,3 +1,5 @@
+import type { ComponentNaming } from './naming';
+
 /**
  * The registry that backs every "Copy template" option — Toast/Modal/Date
  * picker plus the six Core Capabilities. One shape for all nine so a new
@@ -37,6 +39,10 @@ export interface CapabilityTemplateContext {
   /** Resolved architecture's core-code folder, e.g. 'core'. */
   readonly coreDir: string;
   readonly stylesheetExtension: 'scss' | 'sass' | 'css' | 'less';
+  /** 'modern' (bare `toast.ts`/`Toast`) or 'classic' (`toast.component.ts`/`ToastComponent`) — see domain/naming.ts. */
+  readonly naming: ComponentNaming;
+  /** Mirrors `developerTools.unit` — every `.spec.ts` file in this registry is skipped when false. */
+  readonly includeTests: boolean;
 }
 
 export interface TemplateFile {
@@ -44,8 +50,11 @@ export interface TemplateFile {
    * Path relative to `src/app/`, with `{shared}`/`{core}` standing in for
    * the resolved architecture's actual folder names, and `{style}` standing
    * in for the resolved stylesheet extension — resolved via `resolvedPath()`.
+   * A function is used instead of a string when the path itself depends on
+   * `ctx` — e.g. a component's file stem, which is naming-convention
+   * dependent (`toast` vs `toast.component`).
    */
-  readonly relativePath: string;
+  readonly relativePath: string | ((ctx: CapabilityTemplateContext) => string);
   readonly content: (ctx: CapabilityTemplateContext) => string;
 }
 
@@ -83,7 +92,8 @@ export interface TemplateManifest {
 }
 
 export function resolvedPath(file: TemplateFile, ctx: CapabilityTemplateContext): string {
-  return `src/app/${file.relativePath
+  const raw = typeof file.relativePath === 'function' ? file.relativePath(ctx) : file.relativePath;
+  return `src/app/${raw
     .replace('{shared}', ctx.sharedDir)
     .replace('{core}', ctx.coreDir)
     .replace(/\{style\}/g, ctx.stylesheetExtension)}`;

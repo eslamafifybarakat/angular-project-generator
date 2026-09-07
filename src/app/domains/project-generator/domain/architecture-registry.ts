@@ -6,6 +6,7 @@ import {
   type ResolvedArchitecture,
 } from './architecture.model';
 import type { GeneratedFile } from './generated-file.model';
+import { componentFileStem, type ComponentNaming } from './naming';
 import type { ArchitectureSection } from './project-config.model';
 import type { ValidationIssue } from './validation-issue.model';
 
@@ -114,15 +115,29 @@ function exampleLayerDirs(pattern: ArchitectureType): readonly string[] {
  * root files in `deriveFiles()`: a standalone-modern target gets a functional
  * routes file, an NgModule-era target gets a routing module instead — the
  * architecture decides *where* the slice lives, the Angular version profile
- * decides *how* it wires up.
+ * decides *how* it wires up. `naming` picks the file-name/class-name
+ * convention (see `naming.ts`) and, when `includeTests` is on, every
+ * component listed here also gets a `.spec.ts` sibling.
  */
 export function architectureExampleFiles(
   resolved: ResolvedArchitecture,
   era: GenerationEra,
+  naming: ComponentNaming,
+  includeTests: boolean,
 ): GeneratedFile[] {
   const files: GeneratedFile[] = [];
   const add = (path: string, reason: string): void => {
     files.push({ path, reason });
+  };
+  const addComponent = (dir: string, baseName: string, reason: string, withHtml: boolean): void => {
+    const stem = componentFileStem(baseName, naming);
+    add(`${dir}/${stem}.ts`, reason);
+    if (withHtml) {
+      add(`${dir}/${stem}.html`, reason);
+    }
+    if (includeTests) {
+      add(`${dir}/${stem}.spec.ts`, reason);
+    }
   };
   const name = resolved.exampleName;
   const standalone = era === 'standalone-modern';
@@ -150,18 +165,16 @@ export function architectureExampleFiles(
             add(`${root}/infrastructure/data/${name}.data.ts`, reasonTag);
             add(`${root}/infrastructure/data/${name}.json`, reasonTag);
           } else {
-            add(`${root}/presentation/overview/overview.component.ts`, reasonTag);
-            add(`${root}/presentation/overview/overview.component.html`, reasonTag);
+            addComponent(`${root}/presentation/overview`, 'overview', reasonTag, true);
             if (!standalone) {
               add(`${root}/presentation/${name}.module.ts`, reasonTag);
             }
           }
         } else {
           if (layer === 'pages') {
-            add(`${root}/pages/${name}/${name}.component.ts`, reasonTag);
-            add(`${root}/pages/${name}/${name}.component.html`, reasonTag);
+            addComponent(`${root}/pages/${name}`, name, reasonTag, true);
           } else if (layer === 'components') {
-            add(`${root}/components/${name}-summary/${name}-summary.component.ts`, reasonTag);
+            addComponent(`${root}/components/${name}-summary`, `${name}-summary`, reasonTag, false);
           } else if (layer === 'services') {
             add(`${root}/services/${name}.service.ts`, reasonTag);
           } else {
@@ -175,17 +188,15 @@ export function architectureExampleFiles(
       break;
     }
     case 'simple': {
-      add(`src/app/pages/${name}/${name}.component.ts`, reasonTag);
-      add(`src/app/pages/${name}/${name}.component.html`, reasonTag);
-      add(`src/app/components/${name}-summary/${name}-summary.component.ts`, reasonTag);
+      addComponent(`src/app/pages/${name}`, name, reasonTag, true);
+      addComponent(`src/app/components/${name}-summary`, `${name}-summary`, reasonTag, false);
       add(`src/app/services/${name}.service.ts`, reasonTag);
       add(`src/app/models/${name}.model.ts`, reasonTag);
       break;
     }
     case 'custom': {
       const root = sliceRoot as string;
-      add(`${root}/${name}.component.ts`, reasonTag);
-      add(`${root}/${name}.component.html`, reasonTag);
+      addComponent(root, name, reasonTag, true);
       add(`${root}/${name}.service.ts`, reasonTag);
       add(standalone ? `${root}/${name}.routes.ts` : `${root}/${name}.module.ts`, reasonTag);
       break;

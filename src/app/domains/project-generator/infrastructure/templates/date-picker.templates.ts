@@ -1,3 +1,4 @@
+import { componentClassName, componentFileStem } from '../../domain/naming';
 import type { TemplateManifest } from '../../domain/component-template.model';
 
 /**
@@ -31,8 +32,11 @@ export const datePickerManifest: TemplateManifest = {
   },
   files: [
     {
-      relativePath: '{shared}/ui/date-picker/date-picker.ts',
-      content: (ctx) => `import {
+      relativePath: (ctx) => `{shared}/ui/date-picker/${componentFileStem('date-picker', ctx.naming)}.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('date-picker', ctx.naming);
+        const className = componentClassName('date-picker', ctx.naming);
+        return `import {
   ChangeDetectionStrategy,
   Component,
   DOCUMENT,
@@ -63,19 +67,19 @@ interface CalendarDay {
  */
 @Component({
   selector: 'app-date-picker',
-  templateUrl: './date-picker.html',
-  styleUrl: './date-picker.${ctx.stylesheetExtension}',
+  templateUrl: './${stem}.html',
+  styleUrl: './${stem}.${ctx.stylesheetExtension}',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'date-picker' },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DatePicker),
+      useExisting: forwardRef(() => ${className}),
       multi: true,
     },
   ],
 })
-export class DatePicker implements ControlValueAccessor {
+export class ${className} implements ControlValueAccessor {
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly document = inject(DOCUMENT);
 
@@ -211,10 +215,11 @@ function addDays(date: Date, count: number): Date {
 function isSameDay(a: Date, b: Date): boolean {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
-`,
+`;
+      },
     },
     {
-      relativePath: '{shared}/ui/date-picker/date-picker.html',
+      relativePath: (ctx) => `{shared}/ui/date-picker/${componentFileStem('date-picker', ctx.naming)}.html`,
       content: () => `<div class="date-picker__control">
   <button
     type="button"
@@ -266,7 +271,7 @@ function isSameDay(a: Date, b: Date): boolean {
 `,
     },
     {
-      relativePath: '{shared}/ui/date-picker/date-picker.{style}',
+      relativePath: (ctx) => `{shared}/ui/date-picker/${componentFileStem('date-picker', ctx.naming)}.{style}`,
       content: () => `:host {
   display: inline-block;
   position: relative;
@@ -372,13 +377,16 @@ function isSameDay(a: Date, b: Date): boolean {
 `,
     },
     {
-      relativePath: '{shared}/ui/date-picker/date-picker.spec.ts',
-      content: () => `import { TestBed } from '@angular/core/testing';
-import { DatePicker } from './date-picker';
+      relativePath: (ctx) => `{shared}/ui/date-picker/${componentFileStem('date-picker', ctx.naming)}.spec.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('date-picker', ctx.naming);
+        const className = componentClassName('date-picker', ctx.naming);
+        return `import { TestBed } from '@angular/core/testing';
+import { ${className} } from './${stem}';
 
-describe('DatePicker', () => {
+describe('${className}', () => {
   it('opens on trigger click and reports the selected day via registerOnChange', () => {
-    const fixture = TestBed.createComponent(DatePicker);
+    const fixture = TestBed.createComponent(${className});
     const cmp = fixture.componentInstance;
     fixture.detectChanges();
 
@@ -399,7 +407,7 @@ describe('DatePicker', () => {
   });
 
   it('writeValue sets the displayed value', () => {
-    const fixture = TestBed.createComponent(DatePicker);
+    const fixture = TestBed.createComponent(${className});
     const cmp = fixture.componentInstance;
     cmp.writeValue(new Date(2026, 0, 15));
     fixture.detectChanges();
@@ -407,7 +415,7 @@ describe('DatePicker', () => {
   });
 
   it('setDisabledState prevents opening', () => {
-    const fixture = TestBed.createComponent(DatePicker);
+    const fixture = TestBed.createComponent(${className});
     const cmp = fixture.componentInstance;
     cmp.setDisabledState(true);
     fixture.detectChanges();
@@ -415,7 +423,8 @@ describe('DatePicker', () => {
     expect(trigger.disabled).toBe(true);
   });
 });
-`,
+`;
+      },
     },
   ],
 };

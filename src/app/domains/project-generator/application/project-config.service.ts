@@ -9,6 +9,8 @@ import {
 } from '../infrastructure/templates/component-template-registry';
 import {
   architectureExampleFiles,
+  componentFileStem,
+  componentNamingFor,
   resolveArchitecture,
   validateArchitecture,
   DEVELOPER_TOOL_KEYS,
@@ -416,6 +418,9 @@ export class ProjectConfigService {
     const standaloneEra = era === 'standalone-modern';
     const resolved = resolveArchitecture(cfg.architecture, cfg.project.slug);
     const { coreDir, sharedDir, layoutFilesDir } = resolved;
+    const naming = componentNamingFor(cfg.angular.version);
+    const includeTests = cfg.developerTools.unit;
+    const appStem = componentFileStem('app', naming);
 
     for (const path of [
       'package.json',
@@ -423,11 +428,15 @@ export class ProjectConfigService {
       'tsconfig.json',
       'README.md',
       'src/index.html',
+      'public/favicon.svg',
       'src/main.ts',
-      'src/app/app.component.ts',
-      'src/app/app.component.html',
+      `src/app/${appStem}.ts`,
+      `src/app/${appStem}.html`,
     ]) {
       add(path, 'scaffold');
+    }
+    if (includeTests) {
+      add(`src/app/${appStem}.spec.ts`, 'scaffold');
     }
 
     if (standaloneEra) {
@@ -507,7 +516,10 @@ export class ProjectConfigService {
     // focus-trap, HTTP layer's Error handling, Authentication's Storage,
     // Authorization's Authentication) even when the dependency's own choice
     // is 'none', so a generated file never imports something that was not
-    // also generated.
+    // also generated. `naming`/`includeTests` flow into the registry so
+    // toast/modal/date-picker's component files follow the same
+    // version-conditional stem and test-emission rules as every other
+    // generated component (see domain/naming.ts).
     {
       const templateCtx: CapabilityTemplateContext = {
         projectName: cfg.project.name,
@@ -515,6 +527,8 @@ export class ProjectConfigService {
         sharedDir,
         coreDir,
         stylesheetExtension: cfg.styling.preprocessor,
+        naming,
+        includeTests,
       };
       const selected: TemplateCapabilityId[] = this.templateEntries(cfg)
         .filter((entry) => entry.choice === 'customized' && isEraCompatible(entry.id, era))
@@ -527,11 +541,17 @@ export class ProjectConfigService {
     }
 
     add(`src/app/${sharedDir}/utils/slugify.ts`, `architecture/${resolved.pattern}`);
-    add(`src/app/${layoutFilesDir}/header/header.component.ts`, `architecture/${resolved.pattern}`);
-    add(`src/app/${layoutFilesDir}/footer/footer.component.ts`, `architecture/${resolved.pattern}`);
+    const headerStem = componentFileStem('header', naming);
+    const footerStem = componentFileStem('footer', naming);
+    add(`src/app/${layoutFilesDir}/header/${headerStem}.ts`, `architecture/${resolved.pattern}`);
+    add(`src/app/${layoutFilesDir}/footer/${footerStem}.ts`, `architecture/${resolved.pattern}`);
+    if (includeTests) {
+      add(`src/app/${layoutFilesDir}/header/${headerStem}.spec.ts`, `architecture/${resolved.pattern}`);
+      add(`src/app/${layoutFilesDir}/footer/${footerStem}.spec.ts`, `architecture/${resolved.pattern}`);
+    }
 
     if (cfg.architecture.includeExampleDomain) {
-      for (const file of architectureExampleFiles(resolved, era)) {
+      for (const file of architectureExampleFiles(resolved, era, naming, includeTests)) {
         add(file.path, file.reason);
       }
     }

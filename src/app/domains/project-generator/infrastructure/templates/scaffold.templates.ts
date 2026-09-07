@@ -1,5 +1,5 @@
 import { registerContentResolver } from './content-registry';
-import { toClassName } from './template-context.model';
+import { basicComponentSpec, componentClassName, componentFileStem, toClassName } from './template-context.model';
 import type { TemplateContext } from './template-context.model';
 
 /**
@@ -200,7 +200,11 @@ function angularJson(ctx: TemplateContext): string {
   const project = {
     projectType: 'application',
     schematics: {
-      '@schematics/angular:component': { style: 'scss', addTypeToClassName: true },
+      // Angular 21+'s CLI default drops the `.component`/`Component` suffix
+      // (this project's own naming, see `domain/naming.ts`) — keep future
+      // `ng generate component` calls consistent with what this archive
+      // already ships instead of silently reintroducing the old suffix.
+      '@schematics/angular:component': { style: 'scss', addTypeToClassName: ctx.naming === 'classic' },
       '@schematics/angular:directive': { addTypeToClassName: true },
       '@schematics/angular:service': { addTypeToClassName: true },
     },
@@ -314,6 +318,32 @@ function tsconfigJson(ctx: TemplateContext): string {
   return JSON.stringify(config, null, 2) + '\n';
 }
 
+/**
+ * A generic, themed placeholder mark — the project's initial in a rounded
+ * square, colored from the same primary/secondary pair `indexHtml`'s
+ * theme-color meta uses, with a `prefers-color-scheme` swap baked into the
+ * SVG itself so the browser tab icon matches the OS theme with no JS. SVG
+ * rather than `.ico`/`.png`: this engine renders every file as a string in
+ * the browser, with no raster/image library available to bake a real
+ * favicon.ico — an honest default to replace with a real logo before
+ * shipping, not a claim of one.
+ */
+function faviconSvg(ctx: TemplateContext): string {
+  const { primaryColor, secondaryColor } = ctx.cfg.theme;
+  const initial = (ctx.cfg.project.name.trim().charAt(0) || 'A').toUpperCase();
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .bg { fill: ${primaryColor}; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: ${secondaryColor}; }
+    }
+  </style>
+  <rect class="bg" width="64" height="64" rx="14" />
+  <text x="32" y="43" text-anchor="middle" font-family="system-ui, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">${escapeHtml(initial)}</text>
+</svg>
+`;
+}
+
 function indexHtml(ctx: TemplateContext): string {
   const { cfg } = ctx;
   const name = cfg.project.name || 'App';
@@ -329,7 +359,8 @@ function indexHtml(ctx: TemplateContext): string {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="${themeColorLight}" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <!-- Placeholder brand mark generated from your theme colors — swap public/favicon.svg for a real logo before shipping. -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   ${
     cfg.theme.supportDualMode
       ? `<script>
@@ -361,11 +392,13 @@ function escapeHtml(value: string): string {
 
 function mainTs(ctx: TemplateContext): string {
   if (ctx.standalone) {
+    const appStem = componentFileStem('app', ctx.naming);
+    const appClass = componentClassName('app', ctx.naming);
     return `import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
+import { ${appClass} } from './app/${appStem}';
 import { appConfig } from './app/app.config';
 
-bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
+bootstrapApplication(${appClass}, appConfig).catch((err) => console.error(err));
 `;
   }
   return `import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -378,15 +411,24 @@ platformBrowserDynamic()
 }
 
 function appComponentTs(ctx: TemplateContext): string {
-  const { cfg, resolved } = ctx;
+  const { cfg, resolved, naming } = ctx;
+  const headerStem = componentFileStem('header', naming);
+  const footerStem = componentFileStem('footer', naming);
+  const headerClass = componentClassName('header', naming);
+  const footerClass = componentClassName('footer', naming);
+  const appStem = componentFileStem('app', naming);
+  const appClass = componentClassName('app', naming);
+
   const imports: string[] = ['RouterOutlet'];
   const importLines: string[] = [`import { RouterOutlet } from '@angular/router';`];
-  importLines.push(`import { HeaderComponent } from '@layout/header/header.component';`);
-  importLines.push(`import { FooterComponent } from '@layout/footer/footer.component';`);
-  imports.push('HeaderComponent', 'FooterComponent');
+  importLines.push(`import { ${headerClass} } from '@layout/header/${headerStem}';`);
+  importLines.push(`import { ${footerClass} } from '@layout/footer/${footerStem}';`);
+  imports.push(headerClass, footerClass);
   if (cfg.features.toast === 'customized') {
-    importLines.push(`import { ToastComponent } from '@shared/ui/toast/toast.component';`);
-    imports.push('ToastComponent');
+    const toastStem = componentFileStem('toast', naming);
+    const toastClass = componentClassName('toast', naming);
+    importLines.push(`import { ${toastClass} } from '@shared/ui/toast/${toastStem}';`);
+    imports.push(toastClass);
   }
   const bodyLines: string[] = [];
   if (cfg.theme.supportDualMode) {
@@ -406,14 +448,23 @@ ${importLines.join('\n')}
 @Component({
   selector: 'app-root',
   imports: [${imports.join(', ')}],
-  templateUrl: './app.component.html',
+  templateUrl: './${appStem}.html',
 })
-export class AppComponent {
+export class ${appClass} {
 ${bodyLines.join('\n')}
   // SSR-consistent data-theme / lang / dir attributes are applied by these
   // services' own effects — see ${resolved.coreDir}/theme and ${resolved.coreDir}/i18n.
 }
 `;
+}
+
+function appComponentSpec(ctx: TemplateContext): string {
+  // The app root renders <app-header>, which uses routerLink — TestBed needs
+  // a Router provider or component creation throws NG0201.
+  return basicComponentSpec('app', ctx.naming, {
+    providers: ['provideRouter([])'],
+    providerImportLines: [`import { provideRouter } from '@angular/router';`],
+  });
 }
 
 function appComponentHtml(ctx: TemplateContext): string {
@@ -504,6 +555,9 @@ function readmeMd(ctx: TemplateContext): string {
   featureLines.push(`- Rendering: ${cfg.rendering.mode}${cfg.rendering.prerender ? ' + prerender' : ''}`);
   featureLines.push(`- Localization: ${cfg.localization.enabled ? cfg.localization.selectedLanguages.join(', ') : 'disabled'}`);
   featureLines.push(`- SEO: ${cfg.seo.enabled ? 'enabled' : 'disabled'}`);
+  featureLines.push(
+    `- Testing: ${cfg.developerTools.unit ? `.spec.ts generated next to every component (e.g. \`${componentFileStem('header', ctx.naming)}.spec.ts\`)` : 'no test files generated'}`,
+  );
   featureLines.push(`- Toast: ${cfg.features.toast}`);
   featureLines.push(`- Modal: ${cfg.features.modal}`);
   featureLines.push(`- Date picker: ${cfg.features.datePicker}`);
@@ -568,6 +622,7 @@ ${ctx.npmScripts.map((s) => `- \`npm run ${s}\``).join('\n')}
 }
 
 registerContentResolver((path, ctx) => {
+  const appStem = componentFileStem('app', ctx.naming);
   switch (path) {
     case 'package.json':
       return packageJson(ctx);
@@ -579,12 +634,16 @@ registerContentResolver((path, ctx) => {
       return readmeMd(ctx);
     case 'src/index.html':
       return indexHtml(ctx);
+    case 'public/favicon.svg':
+      return faviconSvg(ctx);
     case 'src/main.ts':
       return mainTs(ctx);
-    case 'src/app/app.component.ts':
+    case `src/app/${appStem}.ts`:
       return appComponentTs(ctx);
-    case 'src/app/app.component.html':
+    case `src/app/${appStem}.html`:
       return appComponentHtml(ctx);
+    case `src/app/${appStem}.spec.ts`:
+      return appComponentSpec(ctx);
     case 'src/app/app.config.ts':
       return appConfigTs(ctx);
     case 'src/app/app.routes.ts':

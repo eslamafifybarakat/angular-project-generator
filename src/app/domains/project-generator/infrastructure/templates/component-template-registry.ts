@@ -52,9 +52,16 @@ export function dependencyClosure(ids: readonly TemplateCapabilityId[]): Templat
   return [...closure];
 }
 
-/** Every generated file path a template (and its own file list only, not its capability dependencies) produces. */
+/**
+ * Every generated file path a template (and its own file list only, not its
+ * capability dependencies) produces. Spec files are skipped when
+ * `ctx.includeTests` is false, mirroring the "Unit testing" toggle's effect
+ * on every other generated component.
+ */
 export function manifestFilePaths(id: TemplateCapabilityId, ctx: CapabilityTemplateContext): string[] {
-  return componentTemplateRegistry[id].files.map((file) => resolvedPath(file, ctx));
+  return componentTemplateRegistry[id].files
+    .map((file) => resolvedPath(file, ctx))
+    .filter((path) => ctx.includeTests || !path.endsWith('.spec.ts'));
 }
 
 /** Looks up real file content for a path this registry is responsible for, or undefined if no template owns it. */

@@ -4,6 +4,7 @@ import { Help } from '@shared/ui/help';
 import { ProjectConfigService, FileTreeService } from '../../application';
 import {
   architectureExampleFiles,
+  componentNamingFor,
   ARCHITECTURE_PROFILES,
   ARCHITECTURE_TYPES,
   type ArchitectureGroupingLabel,
@@ -56,7 +57,9 @@ export class ArchitectureStep {
     }
 
     const era = this.configuration.angularProfile()?.era ?? 'standalone-modern';
-    const files = architectureExampleFiles(resolved, era).map((file) => ({
+    const naming = componentNamingFor(this.configuration.config().angular.version);
+    const includeTests = this.configuration.config().developerTools.unit;
+    const files = architectureExampleFiles(resolved, era, naming, includeTests).map((file) => ({
       path: file.path.replace(/^src\/app\//, ''),
       reason: file.reason,
     }));

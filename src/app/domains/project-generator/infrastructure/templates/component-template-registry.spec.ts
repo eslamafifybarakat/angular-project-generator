@@ -14,6 +14,8 @@ const ctx: CapabilityTemplateContext = {
   sharedDir: 'shared',
   coreDir: 'core',
   stylesheetExtension: 'scss',
+  naming: 'modern',
+  includeTests: true,
 };
 
 describe('componentTemplateRegistry', () => {
@@ -66,5 +68,20 @@ describe('componentTemplateRegistry', () => {
     expect(isEraCompatible('toast', 'standalone-modern')).toBe(true);
     expect(isEraCompatible('toast', 'ngmodule-legacy')).toBe(false);
     expect(isEraCompatible('storage', 'ngmodule-legacy')).toBe(true); // requiresEra: 'any'
+  });
+
+  it('follows classic (.component.ts-suffixed) naming for pre-21 Angular versions', () => {
+    const classicCtx: CapabilityTemplateContext = { ...ctx, naming: 'classic' };
+    const paths = manifestFilePaths('toast', classicCtx);
+    expect(paths).toContain('src/app/shared/ui/toast/toast.component.ts');
+    expect(paths).not.toContain('src/app/shared/ui/toast/toast.ts');
+    expect(contentForPath('src/app/shared/ui/toast/toast.component.ts', classicCtx)).toContain('class ToastComponent');
+  });
+
+  it('omits every .spec.ts file when includeTests is false', () => {
+    const noTestsCtx: CapabilityTemplateContext = { ...ctx, includeTests: false };
+    for (const id of Object.keys(componentTemplateRegistry) as (keyof typeof componentTemplateRegistry)[]) {
+      expect(manifestFilePaths(id, noTestsCtx).some((p) => p.endsWith('.spec.ts'))).toBe(false);
+    }
   });
 });

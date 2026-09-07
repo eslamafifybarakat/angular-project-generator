@@ -1,12 +1,16 @@
+import { componentClassName, componentFileStem } from '../../domain/naming';
 import type { TemplateManifest } from '../../domain/component-template.model';
 
 /**
  * Extracted from eslam-barakat-portfolio's `src/app/shared/ui/toast/*`
  * (verified in docs/generator/TEMPLATE_SPECIFICATION.md §12) and transformed
  * to the generator's naming contract: `toast.component.ts` → `toast.ts`,
- * class `ToastComponent` → `Toast`. Content is otherwise unchanged — the
- * source implementation has no project-specific values to substitute (no
- * branding, no hardcoded strings).
+ * class `ToastComponent` → `Toast` for Angular 21+ ('modern' naming);
+ * kept as `toast.component.ts` / `ToastComponent` for older selectable
+ * versions ('classic' naming, see domain/naming.ts) — same rule every other
+ * generated component in this project follows. Content is otherwise
+ * unchanged — the source implementation has no project-specific values to
+ * substitute (no branding, no hardcoded strings).
  */
 export const toastManifest: TemplateManifest = {
   id: 'toast',
@@ -21,31 +25,35 @@ export const toastManifest: TemplateManifest = {
   },
   files: [
     {
-      relativePath: '{shared}/ui/toast/toast.ts',
-      content: (ctx) => `import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+      relativePath: (ctx) => `{shared}/ui/toast/${componentFileStem('toast', ctx.naming)}.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('toast', ctx.naming);
+        const className = componentClassName('toast', ctx.naming);
+        return `import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ToastService } from './toast.service';
 
 @Component({
   selector: 'app-toast',
-  templateUrl: './toast.html',
-  styleUrl: './toast.${ctx.stylesheetExtension}',
+  templateUrl: './${stem}.html',
+  styleUrl: './${stem}.${ctx.stylesheetExtension}',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Toast {
+export class ${className} {
   private readonly toast = inject(ToastService);
 
   protected readonly message = this.toast.message;
   protected readonly isUp = computed(() => this.message() !== null);
 }
-`,
+`;
+      },
     },
     {
-      relativePath: '{shared}/ui/toast/toast.html',
+      relativePath: (ctx) => `{shared}/ui/toast/${componentFileStem('toast', ctx.naming)}.html`,
       content: () =>
         `<div class="toast" [class.is-up]="isUp()" role="status" aria-live="polite">{{ message() }}</div>\n`,
     },
     {
-      relativePath: '{shared}/ui/toast/toast.{style}',
+      relativePath: (ctx) => `{shared}/ui/toast/${componentFileStem('toast', ctx.naming)}.{style}`,
       content: () => `:host {
   display: contents;
 }
@@ -74,6 +82,24 @@ export class Toast {
   opacity: 1;
 }
 `,
+    },
+    {
+      relativePath: (ctx) => `{shared}/ui/toast/${componentFileStem('toast', ctx.naming)}.spec.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('toast', ctx.naming);
+        const className = componentClassName('toast', ctx.naming);
+        return `import { TestBed } from '@angular/core/testing';
+import { ${className} } from './${stem}';
+
+describe('${className}', () => {
+  it('renders the current message from ToastService', () => {
+    const fixture = TestBed.createComponent(${className});
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.toast').classList).not.toContain('is-up');
+  });
+});
+`;
+      },
     },
     {
       relativePath: '{shared}/ui/toast/toast.service.ts',

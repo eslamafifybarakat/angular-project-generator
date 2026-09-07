@@ -1,4 +1,5 @@
 import type { CapabilityTemplateContext } from '../../domain/component-template.model';
+import { componentNamingFor } from '../../domain/naming';
 import { registerContentResolver } from './content-registry';
 import { contentForPath } from './component-template-registry';
 import type { TemplateContext } from './template-context.model';
@@ -26,6 +27,8 @@ function toCapabilityContext(ctx: TemplateContext): CapabilityTemplateContext {
     sharedDir: ctx.resolved.sharedDir,
     coreDir: ctx.resolved.coreDir,
     stylesheetExtension: ctx.cfg.styling.preprocessor,
+    naming: componentNamingFor(ctx.cfg.angular.version),
+    includeTests: ctx.cfg.developerTools.unit,
   };
 }
 

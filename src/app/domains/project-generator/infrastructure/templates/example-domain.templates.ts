@@ -1,5 +1,6 @@
 import { registerContentResolver } from './content-registry';
-import { toClassName } from './template-context.model';
+import { componentFileStem, componentSuffix, toClassName } from './template-context.model';
+import type { ComponentNaming } from './template-context.model';
 
 /**
  * The one example slice generated when `architecture.includeExampleDomain`
@@ -46,11 +47,49 @@ function overviewHtml(className: string): string {
 `;
 }
 
+/** A plain "should create" spec for a component whose class name isn't a
+ * plain function of the file's base name (it's `<domain><Role>` — e.g.
+ * `ArticlesOverview`), so it can't reuse `basicComponentSpec`. */
+function smokeSpec(className: string, importStem: string): string {
+  return `import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ${className} } from './${importStem}';
+
+describe('${className}', () => {
+  let component: ${className};
+  let fixture: ComponentFixture<${className}>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [${className}],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(${className});
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+`;
+}
+
 registerContentResolver((path, ctx) => {
   if (!ctx.cfg.architecture.includeExampleDomain) return undefined;
 
   const name = ctx.resolved.exampleName;
   const className = toClassName(name);
+  const naming: ComponentNaming = ctx.naming;
+  const suffix = componentSuffix(naming);
+  const overviewStem = componentFileStem('overview', naming);
+  const pageStem = componentFileStem(name, naming);
+  const summaryBase = `${name}-summary`;
+  const summaryStem = componentFileStem(summaryBase, naming);
+  const overviewClass = `${className}Overview${suffix}`;
+  const pageClass = `${className}Page${suffix}`;
+  const summaryClass = `${className}Summary${suffix}`;
+  const rootClass = `${className}${suffix}`;
 
   // -- DDD (most specific first) -------------------------------------------
   if (path.endsWith(`/domain/${name}.model.ts`)) {
@@ -106,61 +145,67 @@ export const ${className.toUpperCase()}_DATA: readonly ${className}[] = readApiR
   if (path.endsWith(`/infrastructure/data/${name}.json`)) {
     return seedJson(className);
   }
-  if (path.endsWith('/presentation/overview/overview.component.html')) {
+  if (path.endsWith(`/presentation/overview/${overviewStem}.html`)) {
     return overviewHtml(className);
   }
-  if (path.endsWith('/presentation/overview/overview.component.ts')) {
+  if (path.endsWith(`/presentation/overview/${overviewStem}.ts`)) {
     return `import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ${className}Service } from '../../application/${name}.service';
 
 @Component({
   selector: 'app-${name}-overview',
-  templateUrl: './overview.component.html',
+  templateUrl: './${overviewStem}.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ${className}OverviewComponent {
+export class ${overviewClass} {
   protected readonly service = inject(${className}Service);
 }
 `;
   }
+  if (path.endsWith(`/presentation/overview/${overviewStem}.spec.ts`)) {
+    return smokeSpec(overviewClass, overviewStem);
+  }
   if (path.endsWith(`/presentation/${name}.module.ts`)) {
     return `import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ${className}OverviewComponent } from './overview/overview.component';
+import { ${overviewClass} } from './overview/${overviewStem}';
 
 @NgModule({
-  declarations: [${className}OverviewComponent],
+  declarations: [${overviewClass}],
   imports: [CommonModule],
-  exports: [${className}OverviewComponent],
+  exports: [${overviewClass}],
 })
 export class ${className}Module {}
 `;
   }
 
   // -- Feature-based / Simple ------------------------------------------------
-  if (path.endsWith(`/pages/${name}/${name}.component.html`)) {
+  if (path.endsWith(`/pages/${name}/${pageStem}.html`)) {
     return `<section>
   <h2>${className}</h2>
   <p>{{ summary() }}</p>
 </section>
 `;
   }
-  if (path.endsWith(`/pages/${name}/${name}.component.ts`)) {
+  if (path.endsWith(`/pages/${name}/${pageStem}.ts`)) {
     return `import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ${className}Service } from '../../services/${name}.service';
 
 @Component({
   selector: 'app-${name}-page',
-  templateUrl: './${name}.component.html',
+  templateUrl: './${pageStem}.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ${className}PageComponent {
+export class ${pageClass} {
   private readonly service = inject(${className}Service);
   protected readonly summary = this.service.summary;
 }
 `;
   }
-  if (path.endsWith(`-summary/${name}-summary.component.ts`)) {
+  if (path.endsWith(`/pages/${name}/${pageStem}.spec.ts`)) {
+    return smokeSpec(pageClass, pageStem);
+  }
+  if (path.endsWith(`-summary/${summaryStem}.ts`)) {
     return `import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
@@ -168,10 +213,13 @@ export class ${className}PageComponent {
   template: \`<p>{{ text() }}</p>\`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ${className}SummaryComponent {
+export class ${summaryClass} {
   readonly text = input('');
 }
 `;
+  }
+  if (path.endsWith(`-summary/${summaryStem}.spec.ts`)) {
+    return smokeSpec(summaryClass, summaryStem);
   }
   if (path.endsWith(`/services/${name}.service.ts`)) {
     return `import { Injectable, signal } from '@angular/core';
@@ -208,22 +256,25 @@ import { NgModule } from '@angular/core';
 export class ${className}Module {}
 `;
   }
-  if (path.endsWith(`/${name}.component.html`)) {
+  if (path.endsWith(`/${pageStem}.html`)) {
     return `<section>
   <h2>${className}</h2>
 </section>
 `;
   }
-  if (path.endsWith(`/${name}.component.ts`)) {
+  if (path.endsWith(`/${pageStem}.ts`)) {
     return `import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-${name}',
-  templateUrl: './${name}.component.html',
+  templateUrl: './${pageStem}.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ${className}Component {}
+export class ${rootClass} {}
 `;
+  }
+  if (path.endsWith(`/${pageStem}.spec.ts`)) {
+    return smokeSpec(rootClass, pageStem);
   }
   if (path.endsWith(`/${name}.service.ts`)) {
     return `import { Injectable, signal } from '@angular/core';

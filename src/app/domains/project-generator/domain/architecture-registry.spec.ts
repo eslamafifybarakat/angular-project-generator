@@ -82,17 +82,17 @@ describe('resolveArchitecture', () => {
 describe('architectureExampleFiles', () => {
   it('adds a routes file for Feature-based in the standalone era and a module in NgModule eras', () => {
     const resolved = resolveArchitecture(section({ pattern: 'feature-based' }), 'reference-portal');
-    const modern = architectureExampleFiles(resolved, 'standalone-modern').map((f) => f.path);
+    const modern = architectureExampleFiles(resolved, 'standalone-modern', 'classic', false).map((f) => f.path);
     expect(modern).toContain('src/app/features/reference/reference.routes.ts');
 
-    const legacy = architectureExampleFiles(resolved, 'ngmodule-legacy').map((f) => f.path);
+    const legacy = architectureExampleFiles(resolved, 'ngmodule-legacy', 'classic', false).map((f) => f.path);
     expect(legacy).toContain('src/app/features/reference/reference.module.ts');
     expect(legacy).not.toContain('src/app/features/reference/reference.routes.ts');
   });
 
   it('never mixes DDD layer folders into the Simple example', () => {
     const resolved = resolveArchitecture(section({ pattern: 'simple' }), 'reference-portal');
-    const files = architectureExampleFiles(resolved, 'standalone-modern').map((f) => f.path);
+    const files = architectureExampleFiles(resolved, 'standalone-modern', 'classic', false).map((f) => f.path);
     expect(files.every((p) => !p.includes('/domain/') && !p.includes('/infrastructure/'))).toBe(
       true,
     );
@@ -107,9 +107,9 @@ describe('architectureExampleFiles', () => {
       }),
       'reference-portal',
     );
-    expect(architectureExampleFiles(grouped, 'standalone-modern').map((f) => f.path)).toContain(
-      'src/app/modules/reference/reference.routes.ts',
-    );
+    expect(
+      architectureExampleFiles(grouped, 'standalone-modern', 'classic', false).map((f) => f.path),
+    ).toContain('src/app/modules/reference/reference.routes.ts');
 
     const flat = resolveArchitecture(
       section({
@@ -118,9 +118,9 @@ describe('architectureExampleFiles', () => {
       }),
       'reference-portal',
     );
-    expect(architectureExampleFiles(flat, 'standalone-modern').map((f) => f.path)).toContain(
-      'src/app/reference/reference.routes.ts',
-    );
+    expect(
+      architectureExampleFiles(flat, 'standalone-modern', 'classic', false).map((f) => f.path),
+    ).toContain('src/app/reference/reference.routes.ts');
   });
 });
 

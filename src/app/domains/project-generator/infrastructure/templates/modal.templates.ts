@@ -1,3 +1,4 @@
+import { componentClassName, componentFileStem } from '../../domain/naming';
 import type { TemplateManifest } from '../../domain/component-template.model';
 
 /**
@@ -26,8 +27,11 @@ export const modalManifest: TemplateManifest = {
   },
   files: [
     {
-      relativePath: '{shared}/ui/modal/modal.ts',
-      content: (ctx) => `import {
+      relativePath: (ctx) => `{shared}/ui/modal/${componentFileStem('modal', ctx.naming)}.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('modal', ctx.naming);
+        const className = componentClassName('modal', ctx.naming);
+        return `import {
   ChangeDetectionStrategy,
   Component,
   DOCUMENT,
@@ -51,11 +55,11 @@ let instanceCounter = 0;
 @Component({
   selector: 'app-modal',
   imports: [FocusTrapDirective],
-  templateUrl: './modal.html',
-  styleUrl: './modal.${ctx.stylesheetExtension}',
+  templateUrl: './${stem}.html',
+  styleUrl: './${stem}.${ctx.stylesheetExtension}',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Modal {
+export class ${className} {
   private readonly document = inject(DOCUMENT);
   protected readonly titleId = \`modal-title-\${instanceCounter++}\`;
 
@@ -80,10 +84,11 @@ export class Modal {
     this.openChange.emit(false);
   }
 }
-`,
+`;
+      },
     },
     {
-      relativePath: '{shared}/ui/modal/modal.html',
+      relativePath: (ctx) => `{shared}/ui/modal/${componentFileStem('modal', ctx.naming)}.html`,
       content: () => `@if (open) {
   <div class="modal is-open">
     <!-- Mouse-only backdrop dismiss; keyboard users close via Escape,
@@ -108,7 +113,7 @@ export class Modal {
 `,
     },
     {
-      relativePath: '{shared}/ui/modal/modal.{style}',
+      relativePath: (ctx) => `{shared}/ui/modal/${componentFileStem('modal', ctx.naming)}.{style}`,
       content: () => `:host {
   display: contents;
 }
@@ -188,14 +193,17 @@ export class Modal {
 `,
     },
     {
-      relativePath: '{shared}/ui/modal/modal.spec.ts',
-      content: () => `import { TestBed } from '@angular/core/testing';
-import { Modal } from './modal';
+      relativePath: (ctx) => `{shared}/ui/modal/${componentFileStem('modal', ctx.naming)}.spec.ts`,
+      content: (ctx) => {
+        const stem = componentFileStem('modal', ctx.naming);
+        const className = componentClassName('modal', ctx.naming);
+        return `import { TestBed } from '@angular/core/testing';
+import { ${className} } from './${stem}';
 
-describe('Modal', () => {
+describe('${className}', () => {
   it('renders nothing when closed, and closes on Escape when open', async () => {
-    await TestBed.configureTestingModule({ imports: [Modal] }).compileComponents();
-    const fixture = TestBed.createComponent(Modal);
+    await TestBed.configureTestingModule({ imports: [${className}] }).compileComponents();
+    const fixture = TestBed.createComponent(${className});
     fixture.componentRef.setInput('closeLabel', 'Close');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.modal')).toBeNull();
@@ -210,7 +218,8 @@ describe('Modal', () => {
     expect(closed).toBe(true);
   });
 });
-`,
+`;
+      },
     },
     {
       relativePath: '{shared}/directives/focus-trap.directive.ts',
