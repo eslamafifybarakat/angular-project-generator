@@ -670,19 +670,29 @@ Stated rather than hidden.
    list, the file list and the validation gate are all honest; replacing the
    body of `run()` is the whole of the remaining work, and no component needs
    to change.
-2. **The ZIP size is an estimate**, labelled as one in the UI. There is no
+2. **Only Angular 22 has an executed build behind it.** The Angular step
+   (see [Supported Angular versions](#supported-angular-versions)) models all
+   nine majors from 14 to 22 — real Node/TypeScript ranges, the correct
+   builder, bootstrap strategy, SSR package and testing framework per version —
+   and that model genuinely drives the derived file list and scripts. But
+   "modeled" is not "run": nobody has generated-and-built an Angular 14–21
+   project from this tool, because the tool does not generate real projects
+   yet (see the gap above). Angular 22 is the exception only because this
+   repository *is* one, and its own `npm install` / `build` / `test` results
+   are in the quality-gate table below.
+3. **The ZIP size is an estimate**, labelled as one in the UI. There is no
    archive to measure.
-3. **Recent configurations are in-memory only.** Nothing is written to storage,
+4. **Recent configurations are in-memory only.** Nothing is written to storage,
    so the dashboard list is empty on a fresh visit rather than pretending to
    remember previous sessions.
-4. **The colour ramp is indicative.** How three user colours map onto the
+5. **The colour ramp is indicative.** How three user colours map onto the
    extracted theme's own slots is not settled, so the preview is labelled
    approximate rather than presented as what will be written.
-5. **CSR + JSON-LD warns rather than rejects.** Whether it should be a hard
+6. **CSR + JSON-LD warns rather than rejects.** Whether it should be a hard
    validation failure is an open product question; the UI flags it instead of
    deciding unilaterally.
-6. **No Lighthouse numbers.** See [Lighthouse methodology](#lighthouse-methodology).
-7. **Chinese has no self-hosted webfont.** A full CJK weight is megabytes,
+7. **No Lighthouse numbers.** See [Lighthouse methodology](#lighthouse-methodology).
+8. **Chinese has no self-hosted webfont.** A full CJK weight is megabytes,
    which would break the self-hosted-woff2 LCP policy. The stack falls back to
    system faces; the languages step says so.
 
