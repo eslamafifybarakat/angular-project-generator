@@ -46,6 +46,7 @@
               "entry": "src/server.ts"
             },
             "prerender": true,
+            "allowedCommonJsDependencies": ["jszip"],
             "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",

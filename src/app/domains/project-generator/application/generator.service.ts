@@ -1,5 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ProjectConfigService } from './project-config.service';
+import { FileContentService } from '../infrastructure/file-content.service';
+import { ZipBuilderService } from '../infrastructure/zip-builder.service';
 
 export type StageState = 'pending' | 'running' | 'done' | 'skipped';
 
@@ -15,6 +17,8 @@ export interface GenerationResult {
   readonly zipName: string;
   readonly fileCount: number;
   readonly approximateKb: number;
+  /** The real archive, ready to download — `null` only while a run is still in flight. */
+  readonly blob: Blob | null;
 }
 
 export type RunState = 'idle' | 'running' | 'ready' | 'failed';
@@ -42,6 +46,8 @@ const SKIPPED_MS = 130;
 @Injectable({ providedIn: 'root' })
 export class GeneratorService {
   private readonly configuration = inject(ProjectConfigService);
+  private readonly fileContent = inject(FileContentService);
+  private readonly zipBuilder = inject(ZipBuilderService);
 
   private readonly index = signal(-1);
   private readonly state = signal<RunState>('idle');
@@ -165,7 +171,7 @@ export class GeneratorService {
     const stages = this.stages();
     const next = this.index() + 1;
     if (next >= stages.length) {
-      this.finish();
+      void this.finish();
       return;
     }
     this.index.set(next);
@@ -173,27 +179,42 @@ export class GeneratorService {
     this.timer = setTimeout(() => this.step(), delay);
   }
 
-  private finish(): void {
+  /**
+   * The real engine: renders every derived path to actual file content
+   * (`FileContentService`) and archives it (`ZipBuilderService`) into a
+   * downloadable `Blob` — no more estimate, a real byte size from a real
+   * archive.
+   */
+  private async finish(): Promise<void> {
     const cfg = this.configuration.config();
     const files = this.configuration.generatedFiles();
-    this.outcome.set({
-      zipName: `${cfg.project.slug || 'project'}.zip`,
-      fileCount: files.length,
-      // Deliberately labelled as approximate in the UI: there is no archive to
-      // measure, so this is a size estimate and is presented as one.
-      approximateKb: Math.round(files.length * 2.7 + 24),
-    });
-    this.history.update((all) =>
-      [
-        {
-          name: cfg.project.name,
-          slug: cfg.project.slug,
-          angularVersion: cfg.angular.version,
-          fileCount: files.length,
-        },
-        ...all,
-      ].slice(0, 4),
-    );
-    this.state.set('ready');
+    const npmScripts = this.configuration.npmScripts();
+    const slug = cfg.project.slug || 'project';
+
+    try {
+      const rendered = this.fileContent.renderAll(cfg, npmScripts, files);
+      const archive = await this.zipBuilder.build(rendered, slug);
+      this.outcome.set({
+        zipName: `${slug}.zip`,
+        fileCount: files.length,
+        approximateKb: Math.round(archive.byteSize / 1024),
+        blob: archive.blob,
+      });
+      this.history.update((all) =>
+        [
+          {
+            name: cfg.project.name,
+            slug: cfg.project.slug,
+            angularVersion: cfg.angular.version,
+            fileCount: files.length,
+          },
+          ...all,
+        ].slice(0, 4),
+      );
+      this.state.set('ready');
+    } catch (error) {
+      console.error('Generation failed while rendering/archiving files', error);
+      this.state.set('failed');
+    }
   }
 }

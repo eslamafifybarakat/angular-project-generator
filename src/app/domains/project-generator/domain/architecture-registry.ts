@@ -122,7 +122,9 @@ export function architectureExampleFiles(
   era: GenerationEra,
 ): GeneratedFile[] {
   const files: GeneratedFile[] = [];
-  const add = (path: string, reason: string): void => files.push({ path, reason });
+  const add = (path: string, reason: string): void => {
+    files.push({ path, reason });
+  };
   const name = resolved.exampleName;
   const standalone = era === 'standalone-modern';
   const reasonTag = `architecture/${resolved.pattern} (example ${resolved.groupingLabel})`;

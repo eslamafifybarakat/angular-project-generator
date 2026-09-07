@@ -58,7 +58,10 @@ describe('resolveArchitecture', () => {
       }),
       'reference-portal',
     );
-    expect(resolved.directories).toEqual(['kernel', 'common', 'modules', 'reports']);
+    // The grouping directory is tracked separately from the flat base
+    // directories, exactly like `domains`/`features` for DDD/Feature-based.
+    expect(resolved.directories).toEqual(['kernel', 'common', 'reports']);
+    expect(resolved.groupingDir).toBe('modules');
     expect(resolved.coreDir).toBe('kernel');
     // No layout dir was configured, so shell components fall back to shared/.
     expect(resolved.layoutFilesDir).toBe('common');
@@ -158,8 +161,11 @@ describe('validateArchitecture', () => {
   });
 
   it('rejects a reserved directory name', () => {
+    // 'assets' is both a valid kebab-case segment and a reserved name, so this
+    // exercises the reserved-name check specifically (as opposed to a name
+    // like 'node_modules', which the character rule already rejects first).
     const issues = validateArchitecture(
-      section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), groupingDir: 'node_modules' } }),
+      section({ pattern: 'custom', custom: { ...defaultCustomArchitecture(), groupingDir: 'assets' } }),
     );
     expect(issues.map((i) => i.messageKey)).toContain('validation.archDirReserved');
   });

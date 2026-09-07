@@ -41,7 +41,7 @@ export class ReviewStepComponent {
       {
         step: 'architecture',
         titleKey: 'step.title.architecture',
-        value: cfg.architecture.includeExampleDomain ? 'DDD · example domain' : 'DDD',
+        value: `${cfg.architecture.pattern}${cfg.architecture.includeExampleDomain ? ' · example' : ''}`,
       },
       { step: 'styling', titleKey: 'step.title.styling', value: 'SCSS' },
       {

@@ -54,13 +54,19 @@ export class ProjectReadyComponent {
     this.tab.set(tab);
   }
 
-  /**
-   * There is no archive to download — the generator engine is not attached
-   * yet — so this reports the same thing the size figure says: an estimate,
-   * not a file. It never opens a broken download.
-   */
+  /** Triggers a real browser download of the generated archive. */
   protected download(): void {
-    this.toast.show(this.translations.translate('app.laterNote'));
+    const outcome = this.result();
+    if (!outcome?.blob) {
+      this.toast.show(this.translations.translate('app.laterNote'));
+      return;
+    }
+    const url = URL.createObjectURL(outcome.blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = outcome.zipName;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   protected async copyConfig(): Promise<void> {

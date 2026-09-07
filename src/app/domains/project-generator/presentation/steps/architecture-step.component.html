@@ -1,35 +1,150 @@
 <div class="group">
-  <h2 class="group__head">{{ 'app.archH' | translate }}</h2>
+  <h2 class="group__head">
+    {{ 'app.archH' | translate }}
+    <app-help [headingKey]="helpHeadingKey()" [bodyKey]="helpBodyKey()" />
+  </h2>
   <div class="options">
-    @for (pattern of patterns; track pattern.value) {
+    @for (profile of profiles; track profile.id) {
       <button
         type="button"
         class="option"
-        [disabled]="!pattern.available"
-        [attr.aria-pressed]="pattern.available ? architecture().pattern === pattern.value : null"
+        [attr.aria-pressed]="architecture().pattern === profile.id"
+        (click)="select(profile.id)"
       >
-        <span class="option__title">
-          {{ pattern.title }}
-          @if (!pattern.available) {
-            <span class="badge badge--muted">{{ 'app.planned' | translate }}</span>
-          }
-        </span>
-        <span class="option__desc">
-          {{ pattern.descKey | translate }}
-          @if (!pattern.available) {
-            — {{ 'app.archDisabledWhy' | translate }}
-          }
-        </span>
+        <span class="option__title">{{ profile.nameKey | translate }}</span>
+        <span class="option__desc">{{ profile.descriptionKey | translate }}</span>
       </button>
     }
   </div>
 </div>
 
+@if (isCustom()) {
+  <div class="group">
+    <h2 class="group__head">{{ 'app.archCustom' | translate }}</h2>
+
+    <div class="field">
+      <span class="label">{{ 'app.archCustomRoot' | translate }}</span>
+      <p class="mono ltr-run">src/app/</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="label" for="arch-core">{{ 'app.archCustomCore' | translate }}</label>
+        <input
+          id="arch-core"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.coreDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.coreDir').length > 0"
+          (input)="onCustomField('coreDir', $event)"
+        />
+        @for (issue of issuesFor('architecture.custom.coreDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+      <div class="field">
+        <label class="label" for="arch-shared">{{ 'app.archCustomShared' | translate }}</label>
+        <input
+          id="arch-shared"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.sharedDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.sharedDir').length > 0"
+          (input)="onCustomField('sharedDir', $event)"
+        />
+        @for (issue of issuesFor('architecture.custom.sharedDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="label" for="arch-layout">{{ 'app.archCustomLayout' | translate }}</label>
+        <input
+          id="arch-layout"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.layoutDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.layoutDir').length > 0"
+          (input)="onCustomField('layoutDir', $event)"
+        />
+        <p class="hint">{{ 'app.archOptionalHint' | translate }}</p>
+        @for (issue of issuesFor('architecture.custom.layoutDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+      <div class="field">
+        <label class="label" for="arch-grouping">{{ 'app.archCustomGrouping' | translate }}</label>
+        <input
+          id="arch-grouping"
+          class="input mono"
+          dir="ltr"
+          [value]="architecture().custom.groupingDir"
+          [attr.aria-invalid]="issuesFor('architecture.custom.groupingDir').length > 0"
+          (input)="onCustomField('groupingDir', $event)"
+        />
+        <p class="hint">{{ 'app.archOptionalHint' | translate }}</p>
+        @for (issue of issuesFor('architecture.custom.groupingDir'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="label">{{ 'app.archCustomGroupingLabel' | translate }}</span>
+      <div class="seg" role="group" [attr.aria-label]="'app.archCustomGroupingLabel' | translate">
+        <button
+          type="button"
+          [attr.aria-pressed]="architecture().custom.groupingLabel === 'domain'"
+          (click)="setGroupingLabel('domain')"
+        >
+          {{ 'app.archGroupDomain' | translate }}
+        </button>
+        <button
+          type="button"
+          [attr.aria-pressed]="architecture().custom.groupingLabel === 'feature'"
+          (click)="setGroupingLabel('feature')"
+        >
+          {{ 'app.archGroupFeature' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="label">{{ 'app.archCustomExtra' | translate }}</span>
+      @for (dir of architecture().custom.additionalDirectories; track $index) {
+        <div class="kv">
+          <input
+            class="input mono"
+            dir="ltr"
+            [value]="dir"
+            (input)="updateDirectory($index, $event)"
+            [attr.aria-invalid]="issuesFor('architecture.custom.additionalDirectories.' + $index).length > 0"
+          />
+          <button
+            type="button"
+            class="btn btn--icon btn--danger"
+            [attr.aria-label]="'app.remove' | translate"
+            (click)="removeDirectory($index)"
+          >
+            ×
+          </button>
+        </div>
+        @for (issue of issuesFor('architecture.custom.additionalDirectories.' + $index); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      }
+      <button type="button" class="btn" (click)="addDirectory()">
+        + {{ 'app.addDir' | translate }}
+      </button>
+    </div>
+  </div>
+}
+
 <div class="group">
-  <h2 class="group__head">
-    {{ 'app.exDomainH' | translate }}
-    <app-help headingKey="app.exDomainH" bodyKey="app.exDomainD" />
-  </h2>
+  @let group = groupLabelKey() | translate;
+  <h2 class="group__head">{{ 'app.exDomainH' | translate: { group } }}</h2>
   <label class="switch">
     <input
       type="checkbox"
@@ -39,21 +154,51 @@
     <span class="track"></span>
     <span class="check__text">
       @if (architecture().includeExampleDomain) {
-        {{ 'app.exDomainD' | translate }}
+        {{ 'app.exDomainD' | translate: { group } }}
       } @else {
-        {{ 'app.exDomainOff' | translate }}
+        {{ 'app.exDomainOff' | translate: { group } }}
       }
     </span>
   </label>
+
+  @if (architecture().includeExampleDomain) {
+    <div class="field" style="margin-top: 12px">
+      <label class="label" for="arch-example-name">{{ 'app.exampleNameH' | translate }}</label>
+      <input
+        id="arch-example-name"
+        class="input mono"
+        dir="ltr"
+        [value]="architecture().exampleName"
+        [attr.aria-invalid]="issuesFor('architecture.exampleName').length > 0"
+        (input)="onExampleName($event)"
+      />
+      <p class="hint">{{ 'app.exampleNameHint' | translate }}</p>
+      @for (issue of issuesFor('architecture.exampleName'); track issue.messageKey) {
+        <p class="error">{{ issue.messageKey | translate }}</p>
+      }
+    </div>
+  }
 </div>
 
 <div class="group">
   <h2 class="group__head">{{ 'app.treeH' | translate }}</h2>
-  <div class="code">
-    <pre>src/app/core/
-src/app/shared/
-src/app/layout/@if (architecture().includeExampleDomain) {
-src/app/domains/{{ exampleDomain() }}/
-  domain / application / infrastructure / presentation}</pre>
+  <div class="panel">
+    <ul class="tree">
+      @for (row of previewRows(); track $index) {
+        <li class="tree__row" [style.padding-inline-start.px]="indent(row.depth)">
+          @if (row.isDirectory) {
+            <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--accent)" stroke-width="2" aria-hidden="true">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-linejoin="round" />
+            </svg>
+          } @else {
+            <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--dim)" stroke-width="2" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" />
+              <path d="M14 3v5h5" stroke-linejoin="round" />
+            </svg>
+          }
+          <span class="mono ltr-run">{{ row.name }}</span>
+        </li>
+      }
+    </ul>
   </div>
 </div>

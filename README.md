@@ -23,6 +23,7 @@ screen is one you can check against this repository.
 
 - [Quick start](#quick-start)
 - [Stack and versions](#stack-and-versions)
+- [Supported Angular versions](#supported-angular-versions)
 - [Folder contract](#folder-contract)
 - [DDD layering](#ddd-layering)
 - [Path aliases and the no-barrel rule](#path-aliases-and-the-no-barrel-rule)
@@ -75,7 +76,7 @@ requirement and stopped, so nothing at all runs on an older patch release.
 
 | Package | Version | Why this one |
 |---|---|---|
-| `@angular/core` etc. | `^22.1.5` | Only major with a verified adapter in the template contract |
+| `@angular/core` etc. | `^22.1.5` | The recommended target, and the only one with an executed build behind it — see [Supported Angular versions](#supported-angular-versions) |
 | `@angular/ssr` | `^22.1.7` | Matches `@angular/build`'s peer range |
 | `@angular/build` | `^22.1.7` | `application` builder; owns prerender, SSR and the unit-test target |
 | `typescript` | `~6.0.2` | `@angular/build` peers require `>=6.0 <6.1` — 7.x will not work |
@@ -86,6 +87,64 @@ requirement and stopped, so nothing at all runs on an older patch release.
 
 Every dependency is a real, committed entry. Nothing is installed transiently
 or with `--no-save`.
+
+---
+
+## Supported Angular versions
+
+The Angular step models all nine currently-supported majors (14 through 22)
+individually — not as the five cosmetic ranges the original mockup showed.
+Selecting a version resolves a full capability profile (builder, bootstrap
+strategy, SSR package, testing framework, Node/TypeScript ranges, and which
+modern Angular features actually exist for that major), and that profile is
+the one thing every derived output reads: the file list, the SSR file set,
+the hydration options offered in the rendering step, and the test-runner note
+in the tools step. Switching versions reconciles state that no longer applies
+(for example, event-replay hydration resets to the standard strategy when you
+switch to a version that predates it) instead of silently carrying it into a
+project that can't produce it.
+
+Every fact in the table below comes from
+[angular.dev's own compatibility reference](https://angular.dev/reference/versions)
+and its per-major release notes — not from memory. Where a fact could not be
+confirmed, the previous version of this table said "not verified" rather than
+guessing, and that principle still holds: nothing here is fabricated.
+
+**Only Angular 22 has an executed build behind it — this repository is one.**
+Versions 14–21 are capability-modeled from Angular's published documentation;
+nobody has generated and built an actual project on any of them from this
+tool, because the tool does not write real files yet (see
+[Known gaps](#known-gaps)). "Ready" in the Angular step's badge means
+"this version's profile is accurate and drives the wizard correctly," not
+"this was built and tested."
+
+| Version | Status | Builder | Bootstrap | SSR package | Testing | Node.js | TypeScript |
+|---|---|---|---|---|---|---|---|
+| 22 | Recommended, build-verified | `@angular/build:application` | `bootstrapApplication` | `@angular/ssr` | Vitest | `^22.22.3 \|\| ^24.15.0 \|\| ^26.0.0` | `~6.0.2` |
+| 21 | Supported | `@angular/build:application` | `bootstrapApplication` | `@angular/ssr` | Vitest (default) | `^20.19.0 \|\| ^22.12.0 \|\| ^24.0.0` | `>=5.9.0 <6.0.0` |
+| 20 | Supported | `@angular/build:application` | `bootstrapApplication` | `@angular/ssr` | Karma + Jasmine (Vitest opt-in) | `^20.19.0 \|\| ^22.12.0 \|\| ^24.0.0` | `>=5.8.0 <6.0.0` |
+| 19 | Supported | `@angular-devkit/build-angular:application` | `bootstrapApplication` | `@angular/ssr` | Karma + Jasmine | `^18.19.1 \|\| ^20.11.1 \|\| ^22.0.0` | `>=5.5.0 <5.9.0` |
+| 18 | Supported | `@angular-devkit/build-angular:application` | `bootstrapApplication` | `@angular/ssr` | Karma + Jasmine | `^18.19.1 \|\| ^20.11.1 \|\| ^22.0.0` | `>=5.4.0 <5.6.0` |
+| 17 | Supported | `@angular-devkit/build-angular:application` | `bootstrapApplication` | `@angular/ssr` | Karma + Jasmine | `^18.13.0 \|\| ^20.9.0` | `>=5.2.0 <5.5.0` |
+| 16 | Legacy | Webpack (esbuild builder in preview) | `platformBrowserDynamic().bootstrapModule` | `@nguniversal/express-engine` | Karma + Jasmine | `^16.14.0 \|\| ^18.10.0` | `>=4.9.3 <5.2.0` |
+| 15 | Legacy | Webpack (`browser-esbuild` experimental) | `platformBrowserDynamic().bootstrapModule` | `@nguniversal/express-engine` | Karma + Jasmine | `^14.20.0 \|\| ^16.13.0 \|\| ^18.10.0` | `>=4.8.2 <5.0.0` |
+| 14 | Legacy | Webpack | `platformBrowserDynamic().bootstrapModule` | `@nguniversal/express-engine` | Karma + Jasmine | `^14.15.0 \|\| ^16.10.0` | `>=4.6.2 <4.9.0` |
+
+A capability matrix (signals, the new `@if`/`@for` control flow, `@defer`,
+hydration, event replay, incremental hydration, zoneless change detection) is
+shown per version in the Angular step itself rather than duplicated here,
+since it renders as status chips there, not table cells.
+
+Two generation eras exist underneath this, and `deriveFiles()` branches on
+which one the selected version resolves to:
+
+- **17–22 ("standalone-modern")** write `app.config.ts` / `app.routes.ts` and,
+  when SSR is on, `app.config.server.ts` / `app.routes.server.ts` against
+  `@angular/ssr`.
+- **14–16 ("ngmodule-transitional"/"ngmodule-legacy")** write `app.module.ts` /
+  `app-routing.module.ts` and, when SSR is on, `app.server.module.ts` against
+  `@nguniversal/express-engine` — the historically correct shape for those
+  majors, not a downgraded copy of the modern one.
 
 ---
 
