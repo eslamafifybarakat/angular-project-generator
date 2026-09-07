@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { ProjectConfigService } from '../../application/project-config.service';
+import { TranslatePipe } from '@core/i18n';
+import { ProjectConfigService } from '../../application';
 
 @Component({
   selector: 'app-example-step',

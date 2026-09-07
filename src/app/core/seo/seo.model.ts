@@ -1,4 +1,4 @@
-import type { Lang } from '@core/i18n/i18n.model';
+import type { Lang } from '@core/i18n';
 
 export interface SeoData {
   /** Already-translated page title, without the site-name suffix. */

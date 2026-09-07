@@ -1,6 +1,5 @@
-import { readApiResponse } from '@core/data/read-api-response';
-import type { ApiResponse } from '@core/data/api-response.model';
-import type { AngularVersionProfile } from '../../domain/angular-version.model';
+import { readApiResponse, type ApiResponse } from '@core/data';
+import type { AngularVersionProfile } from '../../domain';
 import raw from './angular-versions.json' with { type: 'json' };
 
 /**

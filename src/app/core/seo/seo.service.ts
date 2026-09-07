@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ConfigService } from '@core/config/config.service';
-import { LanguageService } from '@core/i18n/language.service';
-import { LANGUAGES, LANG_URL_PREFIX, DEFAULT_LANG } from '@core/i18n/i18n.model';
+import { ConfigService } from '@core/config';
+import { LanguageService, LANGUAGES, LANG_URL_PREFIX, DEFAULT_LANG } from '@core/i18n';
 import { DEFAULT_OG_IMAGE, SITE_NAME, type HrefLangEntry, type SeoData } from './seo.model';
 
 /**
@@ -30,7 +29,7 @@ export class SeoService {
 
     this.title.setTitle(full);
     this.setName('description', data.description);
-    this.setName('robots', data.noIndex ? 'noindex,nofollow' : 'index,follow');
+    this.setName('robots', data.noIndex ? 'noindex,follow' : 'index,follow');
 
     this.setProperty('og:type', 'website');
     this.setProperty('og:site_name', SITE_NAME);

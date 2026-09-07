@@ -1,7 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import type { BootstrapContext } from '@angular/platform-browser';
-import { config } from '@app/app.config.server';
-import { App } from '@app/app';
+import { config, App } from '@app';
 
 /**
  * The BootstrapContext argument is required on the server from Angular 20

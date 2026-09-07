@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import type { AngularVersionProfile } from '../domain/angular-version.model';
-import { ANGULAR_VERSIONS } from './data/angular-versions.data';
+import type { AngularVersionProfile } from '../domain';
+import { ANGULAR_VERSIONS } from './data';
 
 /**
  * Reads the compatibility matrix.

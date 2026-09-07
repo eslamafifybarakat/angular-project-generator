@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslationService } from '@core/i18n/translation.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { ThemeService } from '@core/theme/theme.service';
-import { LANGUAGES, isLang, mirrorPath } from '@core/i18n/i18n.model';
-import { Dropdown, type DropdownOption } from '@shared/ui/dropdown/dropdown';
+import {
+  LanguageService,
+  TranslationService,
+  TranslatePipe,
+  LANGUAGES,
+  isLang,
+  mirrorPath,
+} from '@core/i18n';
+import { ThemeService } from '@core/theme';
+import { Dropdown, type DropdownOption } from '@shared/ui/dropdown';
 
 @Component({
   selector: 'app-header',

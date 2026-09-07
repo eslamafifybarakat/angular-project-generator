@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { TranslationService } from '@core/i18n/translation.service';
-import { SeoService } from '@core/seo/seo.service';
-import { mirrorPath } from '@core/i18n/i18n.model';
-import { ToastService } from '@shared/ui/toast/toast.service';
-import { ProjectConfigService } from '../../application/project-config.service';
-import { WIZARD_STEPS, type WizardStepId } from '../../domain/project-config.model';
+import { LanguageService, TranslatePipe, TranslationService, mirrorPath } from '@core/i18n';
+import { SeoService } from '@core/seo';
+import { ToastService } from '@shared/ui/toast';
+import { ProjectConfigService } from '../../application';
+import { WIZARD_STEPS, type WizardStepId } from '../../domain';
 
 @Component({
   selector: 'app-wizard',
@@ -66,10 +63,18 @@ export class Wizard {
   );
 
   constructor() {
-    this.seo.apply({
-      title: this.translations.translate('angular_project_generator_app_cta_create'),
-      description: this.translations.translate('angular_project_generator_app_hero_body'),
-      path: '/new',
+    // The wizard component itself persists across steps — only its
+    // <router-outlet> child swaps — so a one-time apply() in the constructor
+    // would leave every one of the twelve step URLs advertising the same
+    // title and canonical. Re-run per step instead.
+    effect(() => {
+      const step = this.currentStep();
+      this.seo.apply({
+        title: this.translations.translate(this.stepTitleKey(step)),
+        description: this.translations.translate(`angular_project_generator_step_intro_${step}`),
+        path: `/new/${step}`,
+        noIndex: true,
+      });
     });
   }
 

@@ -1,5 +1,5 @@
 import { DOCUMENT, Injectable, inject } from '@angular/core';
-import { ConfigService } from '@core/config/config.service';
+import { ConfigService } from '@core/config';
 import { SITE_NAME } from './seo.model';
 
 const SCRIPT_ID = 'app-json-ld';

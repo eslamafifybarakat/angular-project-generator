@@ -1,5 +1,5 @@
 import { DOCUMENT, Injectable, computed, inject, signal } from '@angular/core';
-import { currentPathname } from '@core/ssr/request-context';
+import { currentPathname } from '@core/ssr';
 import {
   DEFAULT_LANG,
   LANG_COOKIE_KEY,

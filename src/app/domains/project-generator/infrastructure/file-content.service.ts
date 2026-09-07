@@ -1,11 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { resolveContent } from './templates/content-registry';
-import type { TemplateContext } from './templates/template-context.model';
-import './templates/register-templates';
+import { resolveContent, type TemplateContext } from './templates';
 import { AngularVersionRepository } from './angular-version.repository';
-import type { GeneratedFile } from '../domain/generated-file.model';
-import { resolveArchitecture } from '../domain/architecture-registry';
-import type { ProjectConfig } from '../domain/project-config.model';
+import { resolveArchitecture, type GeneratedFile, type ProjectConfig } from '../domain';
 
 /**
  * Turns the derived `GeneratedFile[]` path list into real file contents.

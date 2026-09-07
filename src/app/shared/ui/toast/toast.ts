@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
+import { TranslatePipe } from '@core/i18n';
 import { ToastService } from './toast.service';
 
 @Component({

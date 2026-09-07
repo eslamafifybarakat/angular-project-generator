@@ -1,22 +1,26 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { slugify } from '@shared/utils/slugify';
-import { isAbsoluteUrl, isDisplayName, isHexColor, isKebabSlug } from '@shared/utils/validators';
-import { AngularVersionRepository } from '../infrastructure/angular-version.repository';
-import type { AngularVersionProfile } from '../domain/angular-version.model';
-import type { Preset, PresetPatch } from '../domain/preset.model';
-import type { ValidationIssue } from '../domain/validation-issue.model';
-import type { GeneratedFile } from '../domain/generated-file.model';
-import type { ArchitectureType, CustomArchitectureConfig, ResolvedArchitecture } from '../domain/architecture.model';
-import { architectureExampleFiles, resolveArchitecture, validateArchitecture } from '../domain/architecture-registry';
+import { slugify, isAbsoluteUrl, isDisplayName, isHexColor, isKebabSlug } from '@shared/utils';
+import { AngularVersionRepository } from '../infrastructure';
 import {
+  architectureExampleFiles,
+  resolveArchitecture,
+  validateArchitecture,
   DEVELOPER_TOOL_KEYS,
   defaultProjectConfig,
   fontsFor,
   languageMeta,
+  type AngularVersionProfile,
+  type Preset,
+  type PresetPatch,
+  type ValidationIssue,
+  type GeneratedFile,
+  type ArchitectureType,
+  type CustomArchitectureConfig,
+  type ResolvedArchitecture,
   type EnvironmentEntry,
   type ProjectConfig,
   type WizardStepId,
-} from '../domain/project-config.model';
+} from '../domain';
 
 /**
  * Signal facade over the one ProjectConfig.

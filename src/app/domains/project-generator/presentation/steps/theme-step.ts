@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { Help } from '@shared/ui/help/help';
-import { colorScale, type ScaleStop } from '@shared/utils/color-scale';
-import { isHexColor } from '@shared/utils/validators';
-import { ProjectConfigService } from '../../application/project-config.service';
-import type { ThemeSource } from '../../domain/project-config.model';
+import { TranslatePipe } from '@core/i18n';
+import { Help } from '@shared/ui/help';
+import { colorScale, isHexColor, type ScaleStop } from '@shared/utils';
+import { ProjectConfigService } from '../../application';
+import type { ThemeSource } from '../../domain';
 
 type ColorKey = 'primaryColor' | 'secondaryColor' | 'accentColor';
 

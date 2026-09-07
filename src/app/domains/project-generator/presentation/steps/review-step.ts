@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { mirrorPath } from '@core/i18n/i18n.model';
-import { ProjectConfigService } from '../../application/project-config.service';
-import { languageMeta, type WizardStepId } from '../../domain/project-config.model';
+import { LanguageService, TranslatePipe, mirrorPath } from '@core/i18n';
+import { ProjectConfigService } from '../../application';
+import { languageMeta, type WizardStepId } from '../../domain';
 
 interface ReviewRow {
   readonly step: WizardStepId;

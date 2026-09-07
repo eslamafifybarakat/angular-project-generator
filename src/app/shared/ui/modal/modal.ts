@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FocusTrapDirective } from '@shared/directives/focus-trap.directive';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
+import { FocusTrapDirective } from '@shared/directives';
+import { TranslatePipe } from '@core/i18n';
 
 /**
  * Accessible dialog. Ships with FocusTrapDirective, which it depends on for
