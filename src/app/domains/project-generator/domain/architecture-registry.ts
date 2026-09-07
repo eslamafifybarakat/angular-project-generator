@@ -1,5 +1,4 @@
-import { slugify } from '@shared/utils/slugify';
-import { isSafeDirectorySegment, isSafeRelativeDirPath } from '@shared/utils/validators';
+import { slugify, isSafeDirectorySegment, isSafeRelativeDirPath } from '@shared/utils';
 import type { GenerationEra } from './angular-version.model';
 import {
   ARCHITECTURE_PROFILES,

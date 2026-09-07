@@ -36,21 +36,6 @@ export default tseslint.config(
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      // No barrels: every cross-file import goes through an explicit file
-      // path. This bans the barrel file itself rather than the aliases —
-      // '@core/theme/theme.service' is the intended shape, '@core' or
-      // '@core/index' is not.
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/index', '**/index.ts', '**/index.js'],
-              message: 'Import the file directly (e.g. @core/theme/theme.service) — no barrels.',
-            },
-          ],
-        },
-      ],
     },
   },
   {

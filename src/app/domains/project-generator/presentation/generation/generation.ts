@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject, untracked } from '@angular/core';
 import { Router } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { mirrorPath } from '@core/i18n/i18n.model';
-import { GeneratorService } from '../../application/generator.service';
-import { ProjectConfigService } from '../../application/project-config.service';
+import { LanguageService, TranslatePipe, TranslationService, mirrorPath } from '@core/i18n';
+import { SeoService } from '@core/seo';
+import { GeneratorService, ProjectConfigService } from '../../application';
 
 @Component({
   selector: 'app-generation',
@@ -18,8 +16,17 @@ export class Generation {
   protected readonly configuration = inject(ProjectConfigService);
   private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
+  private readonly translations = inject(TranslationService);
+  private readonly seo = inject(SeoService);
 
   constructor() {
+    this.seo.apply({
+      title: this.translations.translate('angular_project_generator_app_gen_h'),
+      description: this.translations.translate('angular_project_generator_app_gen_sub'),
+      path: '/generate',
+      noIndex: true,
+    });
+
     // Deep-linking here with a broken configuration must not start a run.
     if (this.configuration.isValid()) {
       this.generator.start();

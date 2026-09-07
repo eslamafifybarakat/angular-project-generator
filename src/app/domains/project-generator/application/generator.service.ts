@@ -1,7 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ProjectConfigService } from './project-config.service';
-import { FileContentService } from '../infrastructure/file-content.service';
-import { ZipBuilderService } from '../infrastructure/zip-builder.service';
+import { FileContentService, ZipBuilderService } from '../infrastructure';
 
 export type StageState = 'pending' | 'running' | 'done' | 'skipped';
 

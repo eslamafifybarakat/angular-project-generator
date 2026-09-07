@@ -1,7 +1,10 @@
-import type { AngularVersionProfile, GenerationEra } from '../../domain/angular-version.model';
-import type { ResolvedArchitecture } from '../../domain/architecture.model';
-import type { GeneratedFile } from '../../domain/generated-file.model';
-import type { ProjectConfig } from '../../domain/project-config.model';
+import type {
+  AngularVersionProfile,
+  GenerationEra,
+  ResolvedArchitecture,
+  GeneratedFile,
+  ProjectConfig,
+} from '../../domain';
 
 /**
  * Everything a content resolver needs to render one file's text.

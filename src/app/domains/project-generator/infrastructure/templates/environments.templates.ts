@@ -1,7 +1,7 @@
-import { slugify } from '@shared/utils/slugify';
+import { slugify } from '@shared/utils';
 import { registerContentResolver } from './content-registry';
 import type { TemplateContext } from './template-context.model';
-import type { EnvironmentEntry } from '../../domain/project-config.model';
+import type { EnvironmentEntry } from '../../domain';
 
 /** One environment file per user-defined environment name, per
  * `TEMPLATE_SPECIFICATION.md` §9 — "do not assume the environment names are

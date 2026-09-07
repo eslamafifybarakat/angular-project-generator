@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ArchitectureStep } from './architecture-step';
-import { ProjectConfigService } from '../../application/project-config.service';
+import { ProjectConfigService } from '../../application';
 
 function root(fixture: ComponentFixture<ArchitectureStep>): HTMLElement {
   return fixture.nativeElement as HTMLElement;

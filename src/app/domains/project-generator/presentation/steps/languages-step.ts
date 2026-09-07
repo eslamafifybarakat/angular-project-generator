@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { Help } from '@shared/ui/help/help';
-import { Dropdown, type DropdownOption } from '@shared/ui/dropdown/dropdown';
-import { ProjectConfigService } from '../../application/project-config.service';
+import { TranslatePipe } from '@core/i18n';
+import { Help } from '@shared/ui/help';
+import { Dropdown, type DropdownOption } from '@shared/ui/dropdown';
+import { ProjectConfigService } from '../../application';
 import {
   GENERATED_LANGUAGES,
   fontsFor,
   languageMeta,
   type GeneratedLanguage,
-} from '../../domain/project-config.model';
+} from '../../domain';
 
 @Component({
   selector: 'app-languages-step',

@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { ProjectConfigService } from '../application/project-config.service';
+import { ProjectConfigService } from '../application';
 import { FileContentService } from './file-content.service';
 import { ZipBuilderService } from './zip-builder.service';
-import type { ArchitectureType } from '../domain/architecture.model';
+import type { ArchitectureType } from '../domain';
 
 const FALLBACK_MARKER = 'GENERATOR: no template registered';
 

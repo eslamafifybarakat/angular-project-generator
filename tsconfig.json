@@ -16,7 +16,8 @@
       "@shared/*": ["./src/app/shared/*"],
       "@domains/*": ["./src/app/domains/*"],
       "@layout/*": ["./src/app/layout/*"],
-      "@app/*": ["./src/app/*"]
+      "@app/*": ["./src/app/*"],
+      "@app": ["./src/app/index"]
     }
   },
   "angularCompilerOptions": {

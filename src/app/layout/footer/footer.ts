@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ConfigService } from '@core/config/config.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
+import { ConfigService } from '@core/config';
+import { TranslatePipe } from '@core/i18n';
 
 @Component({
   selector: 'app-footer',

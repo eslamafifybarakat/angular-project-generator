@@ -8,9 +8,8 @@ import {
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideServiceWorker } from '@angular/service-worker';
-import { ConfigService } from '@core/config/config.service';
-import { TranslationService } from '@core/i18n/translation.service';
-import { LanguageService } from '@core/i18n/language.service';
+import { ConfigService } from '@core/config';
+import { TranslationService, LanguageService } from '@core/i18n';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 

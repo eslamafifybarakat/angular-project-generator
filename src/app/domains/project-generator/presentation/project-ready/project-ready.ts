@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { TranslationService } from '@core/i18n/translation.service';
-import { mirrorPath } from '@core/i18n/i18n.model';
-import { ToastService } from '@shared/ui/toast/toast.service';
-import { FileTreeService } from '../../application/file-tree.service';
-import { GeneratorService } from '../../application/generator.service';
-import { ProjectConfigService } from '../../application/project-config.service';
+import { LanguageService, TranslatePipe, TranslationService, mirrorPath } from '@core/i18n';
+import { SeoService } from '@core/seo';
+import { ToastService } from '@shared/ui/toast';
+import { FileTreeService, GeneratorService, ProjectConfigService } from '../../application';
 
 type Tab = 'files' | 'config' | 'install';
 
@@ -26,6 +22,16 @@ export class ProjectReady {
   private readonly toast = inject(ToastService);
   private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
+  private readonly seo = inject(SeoService);
+
+  constructor() {
+    this.seo.apply({
+      title: this.translations.translate('angular_project_generator_app_ready_h'),
+      description: this.translations.translate('angular_project_generator_app_ready_sub'),
+      path: '/ready',
+      noIndex: true,
+    });
+  }
 
   protected readonly tab = signal<Tab>('files');
   protected readonly tabs: readonly { id: Tab; labelKey: string }[] = [

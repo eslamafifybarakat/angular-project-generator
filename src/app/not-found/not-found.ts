@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { TranslationService } from '@core/i18n/translation.service';
-import { SeoService } from '@core/seo/seo.service';
-import { mirrorPath } from '@core/i18n/i18n.model';
+import { LanguageService, TranslatePipe, TranslationService, mirrorPath } from '@core/i18n';
+import { SeoService } from '@core/seo';
 
 @Component({
   selector: 'app-not-found',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { FileTreeNode, GeneratedFile } from '../domain/generated-file.model';
+import type { FileTreeNode, GeneratedFile } from '../domain';
 
 /**
  * Turns the flat generated-file list into a tree for the preview pane.

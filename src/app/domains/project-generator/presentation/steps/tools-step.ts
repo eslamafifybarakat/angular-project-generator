@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { Help } from '@shared/ui/help/help';
-import { ProjectConfigService } from '../../application/project-config.service';
-import type { DeveloperToolsSection } from '../../domain/project-config.model';
+import { TranslatePipe } from '@core/i18n';
+import { Help } from '@shared/ui/help';
+import { ProjectConfigService } from '../../application';
+import type { DeveloperToolsSection } from '../../domain';
 
 type ToolKey = keyof DeveloperToolsSection;
 

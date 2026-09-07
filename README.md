@@ -1,3 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/logo-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="public/logo-color.svg">
+  <img alt="Angular Project Generator" src="public/logo-color.svg" height="56">
+</picture>
+
 # Angular Project Generator
 
 A configuration tool for Angular projects. You walk twelve steps — name,
@@ -26,7 +32,7 @@ screen is one you can check against this repository.
 - [Supported Angular versions](#supported-angular-versions)
 - [Folder contract](#folder-contract)
 - [DDD layering](#ddd-layering)
-- [Path aliases and the no-barrel rule](#path-aliases-and-the-no-barrel-rule)
+- [Path aliases and barrel files](#path-aliases-and-barrel-files)
 - [Naming conventions](#naming-conventions)
 - [Routing](#routing)
 - [SSR and prerendering](#ssr-and-prerendering)
@@ -211,7 +217,7 @@ only ever points inward:
 
 ---
 
-## Path aliases and the no-barrel rule
+## Path aliases and barrel files
 
 ```jsonc
 "paths": {
@@ -223,10 +229,16 @@ only ever points inward:
 }
 ```
 
-There is no `index.ts` anywhere in `core/`, `domains/*/` or `shared/`. Every
-cross-file import names its file: `@core/theme/theme.service`, never `@core`.
-An ESLint `no-restricted-imports` rule bans `**/index` so a barrel cannot be
-reintroduced quietly.
+Every folder under `src/app` — `core/`, `domains/*/`, `shared/`, `layout/`,
+and their subfolders — has an `index.ts` barrel that re-exports its own files
+and, where it has subfolders, their barrels in turn. Cross-folder imports
+name the folder, not the file: `@core/theme`, not
+`@core/theme/theme.service`. A file importing one of its own siblings (or a
+spec importing the file it tests) still names that file directly — importing
+your own folder's barrel from inside that folder is circular. Generated
+project templates (`infrastructure/templates/*.templates.ts`) are unaffected:
+those emit *another* project's source as string content and follow whatever
+convention that generated project declares, independent of this one.
 
 `baseUrl` is deliberately absent — TypeScript 6 deprecates it and errors out
 unless you silence it, so the paths are written relative to the tsconfig

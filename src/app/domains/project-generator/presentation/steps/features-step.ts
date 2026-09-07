@@ -1,10 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import type { TemplateCapabilityId } from '../../domain/component-template.model';
-import type { FeatureChoice } from '../../domain/project-config.model';
+import { TranslatePipe } from '@core/i18n';
+import { ProjectConfigService } from '../../application';
+import type { TemplateCapabilityId, FeatureChoice } from '../../domain';
 import { componentTemplateRegistry, isEraCompatible } from '../../infrastructure/templates/component-template-registry';
-import { ProjectConfigService } from '../../application/project-config.service';
 
 type SectionKey = 'features' | 'coreCapabilities';
 

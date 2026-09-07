@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Dashboard } from '@domains/project-generator/presentation/dashboard/dashboard';
-import { JsonLdService } from '@core/seo/json-ld.service';
-import { SeoService } from '@core/seo/seo.service';
-import { TranslationService } from '@core/i18n/translation.service';
+import { Dashboard } from '@domains/project-generator/presentation/dashboard';
+import { JsonLdService, SeoService } from '@core/seo';
+import { TranslationService } from '@core/i18n';
 
 @Component({
   selector: 'app-home',

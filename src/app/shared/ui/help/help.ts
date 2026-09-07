@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
+import { TranslatePipe } from '@core/i18n';
 
 /**
  * The ⓘ affordance: a real popover, not a native `title` attribute.

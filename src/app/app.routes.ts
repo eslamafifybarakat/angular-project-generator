@@ -1,5 +1,5 @@
 import type { Routes } from '@angular/router';
-import { DEFAULT_LANG, LANGUAGES } from '@core/i18n/i18n.model';
+import { DEFAULT_LANG, LANGUAGES } from '@core/i18n';
 
 /**
  * Route-prefix localization: the default language sits at the root, and every

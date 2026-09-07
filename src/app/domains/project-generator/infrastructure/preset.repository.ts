@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import type { Preset } from '../domain/preset.model';
-import { PRESETS } from './data/presets.data';
+import type { Preset } from '../domain';
+import { PRESETS } from './data';
 
 @Injectable({ providedIn: 'root' })
 export class PresetRepository {

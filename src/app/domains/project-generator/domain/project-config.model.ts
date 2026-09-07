@@ -1,4 +1,4 @@
-import type { Lang } from '@core/i18n/i18n.model';
+import type { Lang } from '@core/i18n';
 import {
   defaultCustomArchitecture,
   type ArchitectureType,

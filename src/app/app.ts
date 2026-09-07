@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from '@layout/header/header';
-import { Footer } from '@layout/footer/footer';
-import { Toast } from '@shared/ui/toast/toast';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { LanguageService } from '@core/i18n/language.service';
+import { Header } from '@layout/header';
+import { Footer } from '@layout/footer';
+import { Toast } from '@shared/ui/toast';
+import { TranslatePipe, LanguageService } from '@core/i18n';
 
 @Component({
   selector: 'app-root',

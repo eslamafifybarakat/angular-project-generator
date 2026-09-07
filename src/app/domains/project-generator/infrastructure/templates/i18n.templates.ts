@@ -1,4 +1,4 @@
-import { languageMeta } from '../../domain/project-config.model';
+import { languageMeta } from '../../domain';
 import { registerContentResolver } from './content-registry';
 import type { TemplateContext } from './template-context.model';
 

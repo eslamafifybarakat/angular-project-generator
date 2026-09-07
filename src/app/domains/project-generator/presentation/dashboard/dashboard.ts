@@ -1,15 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { LanguageService } from '@core/i18n/language.service';
-import { TranslatePipe } from '@core/i18n/translate.pipe';
-import { TranslationService } from '@core/i18n/translation.service';
-import { mirrorPath } from '@core/i18n/i18n.model';
-import { Modal } from '@shared/ui/modal/modal';
-import { ToastService } from '@shared/ui/toast/toast.service';
-import { ProjectConfigService } from '../../application/project-config.service';
-import { GeneratorService } from '../../application/generator.service';
-import { PresetRepository } from '../../infrastructure/preset.repository';
-import type { Preset } from '../../domain/preset.model';
+import { LanguageService, TranslatePipe, TranslationService, mirrorPath } from '@core/i18n';
+import { Modal } from '@shared/ui/modal';
+import { ToastService } from '@shared/ui/toast';
+import { ProjectConfigService, GeneratorService } from '../../application';
+import { PresetRepository } from '../../infrastructure';
+import type { Preset } from '../../domain';
 
 @Component({
   selector: 'app-dashboard',
