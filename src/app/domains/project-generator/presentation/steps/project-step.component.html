@@ -1,0 +1,66 @@
+<div class="group">
+  <div class="field">
+    <label class="label" for="project-name">{{ 'app.fName' | translate }}</label>
+    <input
+      id="project-name"
+      class="input"
+      [value]="project().name"
+      [attr.aria-invalid]="nameIssues().length > 0"
+      [attr.aria-describedby]="nameIssues().length > 0 ? 'project-name-error' : null"
+      (input)="onName($event)"
+    />
+    <p class="hint">{{ 'app.fNameHint' | translate }}</p>
+    @for (issue of nameIssues(); track issue.messageKey) {
+      <p class="error" id="project-name-error">{{ issue.messageKey | translate }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-slug">
+      {{ 'app.fSlug' | translate }}
+      <app-help headingKey="app.fSlug" bodyKey="app.fSlugHint" />
+    </label>
+    <input
+      id="project-slug"
+      class="input mono"
+      dir="ltr"
+      [value]="project().slug"
+      [attr.aria-invalid]="slugIssues().length > 0"
+      (input)="onSlug($event)"
+    />
+    @for (issue of slugIssues(); track issue.messageKey) {
+      <p class="error">{{ issue.messageKey | translate }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-description">{{ 'app.fDesc' | translate }}</label>
+    <textarea
+      id="project-description"
+      class="textarea"
+      [value]="project().description"
+      (input)="onDescription($event)"
+    ></textarea>
+    <p class="hint">{{ 'app.fDescHint' | translate }}</p>
+  </div>
+
+  <div class="field">
+    <label class="label" for="project-type">{{ 'app.fType' | translate }}</label>
+    <app-dropdown
+      dropdownId="project-type"
+      [options]="typeOptions"
+      [value]="project().type"
+      (valueChange)="onType($event)"
+    />
+    <p class="hint">{{ 'app.fTypeHint' | translate }}</p>
+  </div>
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'app.previewH' | translate }}</h2>
+  <div class="code">
+    <pre>{{ 'app.pDisplay' | translate }}: {{ project().name || '—' }}
+{{ 'app.pPackage' | translate }}: {{ project().slug || '—' }}
+{{ 'app.pFolder' | translate }}:  {{ project().slug || '—' }}/</pre>
+  </div>
+</div>

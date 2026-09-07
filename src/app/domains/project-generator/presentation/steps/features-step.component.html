@@ -1,0 +1,73 @@
+<div class="group">
+  @for (feature of features; track feature.key) {
+    <div class="rowcard">
+      <div class="rowcard__head">
+        <h3>{{ feature.label }}</h3>
+        <span class="spacer"></span>
+        <span
+          class="badge"
+          [class.badge--muted]="current(feature.key) === 'none'"
+          [class.badge--info]="current(feature.key) === 'install-later'"
+          [class.badge--ok]="current(feature.key) === 'customized'"
+        >
+          {{ choiceLabelKey(current(feature.key)) | translate }}
+        </span>
+      </div>
+
+      <p class="option__desc" style="margin-bottom: 12px">{{ feature.descKey | translate }}</p>
+
+      <div class="seg" role="group" [attr.aria-label]="feature.label">
+        @for (choice of feature.choices; track choice) {
+          <button
+            type="button"
+            [attr.aria-pressed]="current(feature.key) === choice"
+            (click)="select(feature.key, choice)"
+          >
+            {{ choiceLabelKey(choice) | translate }}
+          </button>
+        }
+      </div>
+
+      @if (feature.key === 'datePicker') {
+        <p class="hint" style="margin-top: 8px">{{ 'app.custNotAvail' | translate }}</p>
+      }
+
+      @if (current(feature.key) === 'customized') {
+        <div class="panel--inset" style="margin-top: 12px">
+          @for (key of detectionKeys; track key) {
+            <p class="option__desc" style="color: var(--ok)">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                <path d="m20 6-11 11-5-5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              {{ key | translate }}
+            </p>
+          }
+          @if (feature.key === 'modal') {
+            <p class="hint" style="margin-top: 8px">{{ 'app.modalDep' | translate }}</p>
+          }
+        </div>
+      } @else if (current(feature.key) === 'install-later') {
+        <p class="hint" style="margin-top: 10px">{{ 'app.laterNote' | translate }}</p>
+      }
+
+      @for (issue of issues(feature.key); track issue.messageKey) {
+        <p class="error">{{ issue.messageKey | translate }}</p>
+      }
+    </div>
+  }
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'app.plannedH' | translate }}</h2>
+  <p class="group__sub">{{ 'app.plannedD' | translate }}</p>
+  <div class="options">
+    @for (key of plannedKeys; track key) {
+      <button type="button" class="option" disabled>
+        <span class="option__title">
+          {{ key | translate }}
+          <span class="badge badge--muted">{{ 'app.planned' | translate }}</span>
+        </span>
+      </button>
+    }
+  </div>
+</div>

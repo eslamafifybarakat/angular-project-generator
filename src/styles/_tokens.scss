@@ -1,0 +1,86 @@
+// ---------------------------------------------------------------------------
+// Structural scale — theme-agnostic. Identical in light and dark.
+// Colour lives in _themes.scss; nothing in this file is colour.
+// ---------------------------------------------------------------------------
+@use 'sass:map';
+
+// Font stacks. Self-hosting is deliberate for LCP, so every stack degrades to
+// system faces rather than pulling a webfont from a CDN. Chinese has no
+// self-hosted face on purpose: a full CJK weight is megabytes (see README).
+$font-display: 'Figtree', ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
+$font-body: 'Figtree', ui-sans-serif, -apple-system, 'Segoe UI', Roboto, sans-serif;
+$font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+$font-display-arabic: 'Cairo', 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+$font-body-arabic: 'Cairo', 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+$font-body-cjk: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+
+$radii: (
+  sm: 5px,
+  md: 9px,
+  lg: 14px,
+  pill: 999px,
+);
+
+$space: (
+  1: 4px,
+  2: 8px,
+  3: 12px,
+  4: 16px,
+  5: 20px,
+  6: 24px,
+  7: 32px,
+  8: 40px,
+  9: 56px,
+  10: 72px,
+);
+
+$bp: (
+  sm: 420px,
+  md: 640px,
+  lg: 820px,
+  xl: 1160px,
+);
+
+$z: (
+  bar: 40,
+  drawer: 55,
+  pop: 60,
+  modal: 80,
+  toast: 90,
+);
+
+@function radius($k) {
+  @return map.get($radii, $k);
+}
+@function space($k) {
+  @return map.get($space, $k);
+}
+@function bp($k) {
+  @return map.get($bp, $k);
+}
+@function z($k) {
+  @return map.get($z, $k);
+}
+
+@mixin below($k) {
+  @media (max-width: #{bp($k)}) {
+    @content;
+  }
+}
+
+:root {
+  --bar-h: 57px;
+  --tap: 44px;
+  --dur: 150ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  // Direction-aware helpers. Flip once here instead of at every call site.
+  --dx: 1;
+  --flow: row;
+}
+
+[dir='rtl'] {
+  --dx: -1;
+  --flow: row-reverse;
+}

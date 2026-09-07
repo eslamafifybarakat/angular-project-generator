@@ -1,0 +1,112 @@
+@use 'styles/tokens' as t;
+
+.run {
+  max-width: 640px;
+}
+
+.run__title {
+  margin-bottom: t.space(2);
+  font-size: 1.6rem;
+  font-weight: 660;
+  letter-spacing: -0.02em;
+}
+
+.run__sub {
+  margin-bottom: t.space(6);
+  color: var(--muted);
+  font-size: 0.855rem;
+}
+
+.progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: t.radius(pill);
+  background: var(--surface-3);
+}
+
+.progress__fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--cta));
+  transition: width 220ms var(--ease);
+}
+
+.run__pct {
+  margin: t.space(2) 0 t.space(6);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.stages {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: t.space(3);
+  padding: t.space(2) t.space(3);
+  border-radius: t.radius(sm);
+  color: var(--dim);
+  font-size: 0.855rem;
+}
+
+.stage--running {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.stage--done {
+  color: var(--text);
+}
+
+.stage__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: t.$font-mono;
+  font-size: 11px;
+}
+
+.stage--done .stage__mark {
+  border-color: transparent;
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.stage--running .stage__mark {
+  border-color: var(--accent);
+}
+
+.stage__label {
+  min-width: 0;
+}
+
+.spinner {
+  width: 11px;
+  height: 11px;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 620ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.run__actions {
+  display: flex;
+  gap: t.space(3);
+  margin-top: t.space(5);
+}

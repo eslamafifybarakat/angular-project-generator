@@ -1,0 +1,116 @@
+<div class="group">
+  @for (env of environments(); track $index) {
+    <div class="rowcard">
+      <div class="rowcard__head">
+        <h3>{{ env.name || '—' }}</h3>
+        @if ($index === 0) {
+          <span class="badge badge--accent">{{ 'app.defaultEnv' | translate }}</span>
+        }
+        <span class="spacer"></span>
+        @if (environments().length > 1) {
+          <button
+            type="button"
+            class="btn btn--icon btn--danger"
+            [attr.aria-label]="'app.remove' | translate"
+            (click)="configuration.removeEnvironment($index)"
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        }
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="label" [attr.for]="'env-name-' + $index">{{ 'app.envName' | translate }}</label>
+          <input
+            class="input mono"
+            dir="ltr"
+            [id]="'env-name-' + $index"
+            [value]="env.name"
+            [attr.aria-invalid]="issues($index, 'name').length > 0"
+            (input)="onField($index, 'name', $event)"
+          />
+          @for (issue of issues($index, 'name'); track issue.messageKey) {
+            <p class="error">{{ issue.messageKey | translate }}</p>
+          }
+        </div>
+        <div class="field">
+          <label class="label" [attr.for]="'env-api-' + $index">{{ 'app.apiUrl' | translate }}</label>
+          <input
+            class="input mono"
+            dir="ltr"
+            [id]="'env-api-' + $index"
+            [value]="env.apiUrl"
+            [attr.aria-invalid]="issues($index, 'apiUrl').length > 0"
+            (input)="onField($index, 'apiUrl', $event)"
+          />
+          @for (issue of issues($index, 'apiUrl'); track issue.messageKey) {
+            <p class="error">{{ issue.messageKey | translate }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" [attr.for]="'env-site-' + $index">{{ 'app.siteUrl' | translate }}</label>
+        <input
+          class="input mono"
+          dir="ltr"
+          [id]="'env-site-' + $index"
+          [value]="env.siteUrl"
+          [attr.aria-invalid]="issues($index, 'siteUrl').length > 0"
+          (input)="onField($index, 'siteUrl', $event)"
+        />
+        @for (issue of issues($index, 'siteUrl'); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+
+      @for (variable of env.extra; track $index; let varIndex = $index) {
+        <div class="kv">
+          <input
+            class="input mono"
+            dir="ltr"
+            [value]="variable.key"
+            [attr.placeholder]="'app.varKey' | translate"
+            [attr.aria-label]="'app.varKey' | translate"
+            (input)="onVariable($index, varIndex, 'key', $event)"
+          />
+          <input
+            class="input mono"
+            dir="ltr"
+            [value]="variable.value"
+            [attr.placeholder]="'app.varValue' | translate"
+            [attr.aria-label]="'app.varValue' | translate"
+            (input)="onVariable($index, varIndex, 'value', $event)"
+          />
+          <button
+            type="button"
+            class="btn btn--icon btn--danger"
+            [attr.aria-label]="'app.remove' | translate"
+            (click)="configuration.removeEnvironmentVariable($index, varIndex)"
+          >
+            ×
+          </button>
+        </div>
+      }
+
+      <button type="button" class="btn" (click)="configuration.addEnvironmentVariable($index)">
+        + {{ 'app.addVar' | translate }}
+      </button>
+    </div>
+  }
+
+  <button type="button" class="btn" (click)="configuration.addEnvironment()">
+    + {{ 'app.addEnv' | translate }}
+  </button>
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'app.envFilesH' | translate }}</h2>
+  <div class="code">
+    <pre>@for (file of fileList(); track file) {{{ file }}
+}// angular.json → configurations: {{ configurationNames() }}</pre>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+@use 'styles/tokens' as t;
+
+.missing {
+  max-width: 52ch;
+  text-align: center;
+}
+
+.missing__code {
+  color: var(--accent);
+  font-size: 0.855rem;
+  font-weight: 700;
+}
+
+.missing__title {
+  margin: t.space(3) 0 t.space(2);
+  font-size: 1.75rem;
+  font-weight: 660;
+  letter-spacing: -0.02em;
+}
+
+.missing__body {
+  margin-bottom: t.space(6);
+  color: var(--muted);
+}

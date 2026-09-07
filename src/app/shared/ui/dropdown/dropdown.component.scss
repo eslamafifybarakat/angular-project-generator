@@ -1,0 +1,108 @@
+@use 'styles/tokens' as t;
+
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.space(3);
+  width: 100%;
+  min-height: 40px;
+  padding: t.space(2) t.space(3);
+  border: 1px solid var(--line-2);
+  border-radius: t.radius(md);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--err);
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px var(--err-soft);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.dropdown__trigger--compact {
+  min-height: 34px;
+  padding: t.space(1) t.space(2) t.space(1) t.space(3);
+  font-size: 0.855rem;
+}
+
+.dropdown__value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dropdown__chevron {
+  flex: 0 0 auto;
+  color: var(--muted);
+  transition: transform var(--dur) var(--ease);
+
+  &.is-open {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown__list {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + #{t.space(1)});
+  z-index: t.z(pop);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: t.space(1);
+  border: 1px solid var(--line-2);
+  border-radius: t.radius(md);
+  background: var(--surface);
+  box-shadow: var(--shadow-pop);
+}
+
+.dropdown__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: t.space(2);
+  padding: t.space(2) t.space(3);
+  border-radius: t.radius(sm);
+  font-size: 0.855rem;
+  cursor: pointer;
+
+  &.is-active {
+    background: var(--surface-3);
+  }
+
+  &[aria-selected='true'] {
+    color: var(--accent);
+    font-weight: 620;
+  }
+}
+
+.dropdown__option-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

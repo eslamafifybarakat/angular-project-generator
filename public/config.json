@@ -1,0 +1,6 @@
+{
+  "_comment": "Runtime override, read once at bootstrap. Only apiUrl, siteUrl and enableAnalytics are honoured; everything else here is ignored. Edit this file on a built artifact to repoint an environment without a rebuild.",
+  "apiUrl": "",
+  "siteUrl": "",
+  "enableAnalytics": false
+}

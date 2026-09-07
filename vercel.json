@@ -1,0 +1,65 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/angular-project-generator/browser",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-hashes' 'sha256-1U4hcbuX4wC2KPadwaDbBRw2sTHr9FaSVpCwun7xDnw=' 'sha256-1yuGogNL3SZ3/Df8cLcHL4Qc/SMNKzXCaaLY8q34KQU=' 'sha256-25TJ/iYhu0lxeB4em8YxC520EaE1BnaU/Bei8/iT78I=' 'sha256-2H4YI8cYHkyAhEHIlf8r+bx6SYGjIPTqXB/lp8QnjW8=' 'sha256-2K7h/iZox8zkPpmYSaGmq0dgmzUHpD7369kCiWs6utU=' 'sha256-2ygTeMm534HYaOll2Y8+ySEjx04QjPtRrglSopXbUwg=' 'sha256-5QistdVqHWBcBqvY05MlHbhfSg6c+3SXrxvAXSZq62Y=' 'sha256-5wXaE10Bom6TRFb+TnO4Ji4PPVghwnqlO8poMD5hwWE=' 'sha256-674RDQKqfBF0cqOKeY1PHiR4Ja9UTjDBX1+oJjVPkCo=' 'sha256-6rko7qwF8vRV6KaUvwbMvu4umxhmu5PhDbU1LWG/jIU=' 'sha256-8pLyltCRECMJpEAjSB9pbsmo1UdUtodY2I4aY5E1YlQ=' 'sha256-9SM9IFR4R0D+HU6HzSfjPapZ/vKjDgANK5kvyLub0no=' 'sha256-Ad4VdFsVvGmqjQyZYcPKR/F7LeCAX0Vk7eSj0a/poRY=' 'sha256-Az0noRzG732ZZ60h7g37cmpW+DWoA0z1wBpb62/1/tk=' 'sha256-BLUNwWJIxz9KPG6cEeASqtgaBekoGsHM06yCFE0xiK0=' 'sha256-Cd1ZoRCS9lKIemKgbYzjhuAJhi5RqN3s7R8n7uJqfO8=' 'sha256-FLZu/KDYNom5cluT5yfiami6I9g19prmavE8eR+Iiac=' 'sha256-ISlvYnwSmhjPi3gypzdnKWlfXopINvC9ecSUIO6rhWU=' 'sha256-IUZX2mf9GcPQCj5EK6C9nRDN5QpKwrfixftJ6kYZr7s=' 'sha256-IfcZKNmS1W4H37r1b7FvBw/TV4Qfx2CWAayxiQ8exz4=' 'sha256-J/yopCgzQ/8ddNpxM5y5T3+r/fuh8cYH5MAkN+nKmtQ=' 'sha256-JSu+tt45Vb2H0gfun9/P9UMnX01txaKOUvYZPd2ToL0=' 'sha256-Jpi9FlCYfRBsHPhhtfcgr/7nUqc3c5hqXx8SP56u9sY=' 'sha256-JvXNfWueYc4qLReGwUEIVC0zhl201lyIcnv+EuuaVow=' 'sha256-KB+BOtda1msyWnQ+sGBh+QwqTRegRUamnGlH/UAlkD8=' 'sha256-KUmBkcYyA5YMHH14YGYEikCTpQKAdsMPaWQtCB+Neaw=' 'sha256-M77cChSphWVs1s6d6h+eqpUUogvti2nUWWqe0uyYp+o=' 'sha256-M8aziC4o82F43SlVewwJaJEsl1DmUn654xP3QDAXXfk=' 'sha256-NNFbPn1VKxkb0NAAgi3Qzh9aPWfxtiKoCvFEt5F+yrg=' 'sha256-SEBCPPeil20kmTC/VW1+PtUEhffMSdp9b1fdzl6l7EA=' 'sha256-SGyX8gVvDI95BLlB2eDCOuooDmzOKJgc2nbflZrEmhI=' 'sha256-SpIOR9n7rNcGcmaudb+djvbK9OkXwgGuodXqEL8G+uo=' 'sha256-VM2mZqyEQZoLzoTrp5EigFvzQ0+f1wSeBuoOn95WHCg=' 'sha256-Xova8VufAF8WR9RrqOyuzjLVl6c+Ru+o+CuNV4XQylA=' 'sha256-cDUs9t8Soj4yeVqh4M7TbhKxOq+hQ75UrIrH5vlG2sU=' 'sha256-chfX96+iw1yEujyNKovbx90/GhhFaiLpXuaAkhxhsxI=' 'sha256-dY10gwZd42OSK1PpykrYMz13WCpyOUmoAgnG1hlZUnk=' 'sha256-eOLzTL1vFIJfBXHHrxEKu8sFw2ruLgBxv/GpWeGeT38=' 'sha256-fEGIpDjP2SVxDjtUDaZ3dzLt003ovJde+ICfSXodTmk=' 'sha256-fdALLykpu+PQshqt+/1ilZqAWpYmdeXPP7c9btQ/cto=' 'sha256-iPl195WXPsAM0H8yjS+RW19SSdMQ7zi0CllYRZeXcMc=' 'sha256-kDsvv+J7r4aFkhcQwbSiuVD8QLvvZu5xR2sKUEMuv34=' 'sha256-lFA55w3AzQDHy6J+lOooi6NYktmE8w6yvQr4p11E6e0=' 'sha256-lU7WBNUt+n3PWqwflxukTwkI+hRdKSPY14IPaL3r4XE=' 'sha256-sKBo6iDrFrh7IimVOj36a57w9Nl7aulbsDOb8/HTvZ0=' 'sha256-tHWJdinxTbXYgrWYTtAtiFNHY6ye0UCD97CAUq86juI=' 'sha256-u/9x8MXadMawjOdhopdY3xlVYgbmrMGAuGHrzPnLSCM=' 'sha256-w4odbK0z4RaN0OrrLBY1qRurtrNNT97FuLv9GzCZ+tw=' 'sha256-wMY3MF+CUIpYVBNoc7j+slDiuiGmB3YV/4C61B8wKew=' 'sha256-yF1/iQd4YjcrB440kU5/V7hGQlQcBn7ztG+DLqh/444=' 'sha256-zkrHKb8MeoGT754+zFE52WvtmFreU77vEEyAv0lvtSo=' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css|woff2|png|svg|ico)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/config.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/ngsw-worker.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

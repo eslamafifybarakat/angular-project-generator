@@ -1,0 +1,59 @@
+<div class="group">
+  <h2 class="group__head">{{ 'app.archH' | translate }}</h2>
+  <div class="options">
+    @for (pattern of patterns; track pattern.value) {
+      <button
+        type="button"
+        class="option"
+        [disabled]="!pattern.available"
+        [attr.aria-pressed]="pattern.available ? architecture().pattern === pattern.value : null"
+      >
+        <span class="option__title">
+          {{ pattern.title }}
+          @if (!pattern.available) {
+            <span class="badge badge--muted">{{ 'app.planned' | translate }}</span>
+          }
+        </span>
+        <span class="option__desc">
+          {{ pattern.descKey | translate }}
+          @if (!pattern.available) {
+            — {{ 'app.archDisabledWhy' | translate }}
+          }
+        </span>
+      </button>
+    }
+  </div>
+</div>
+
+<div class="group">
+  <h2 class="group__head">
+    {{ 'app.exDomainH' | translate }}
+    <app-help headingKey="app.exDomainH" bodyKey="app.exDomainD" />
+  </h2>
+  <label class="switch">
+    <input
+      type="checkbox"
+      [checked]="architecture().includeExampleDomain"
+      (change)="toggleExample($event)"
+    />
+    <span class="track"></span>
+    <span class="check__text">
+      @if (architecture().includeExampleDomain) {
+        {{ 'app.exDomainD' | translate }}
+      } @else {
+        {{ 'app.exDomainOff' | translate }}
+      }
+    </span>
+  </label>
+</div>
+
+<div class="group">
+  <h2 class="group__head">{{ 'app.treeH' | translate }}</h2>
+  <div class="code">
+    <pre>src/app/core/
+src/app/shared/
+src/app/layout/@if (architecture().includeExampleDomain) {
+src/app/domains/{{ exampleDomain() }}/
+  domain / application / infrastructure / presentation}</pre>
+  </div>
+</div>

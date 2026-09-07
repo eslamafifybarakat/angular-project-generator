@@ -1,0 +1,61 @@
+{
+  "status": 200,
+  "message": "Starting configurations",
+  "data": [
+    {
+      "id": "ssr-starter",
+      "nameKey": "preset.ssrStarter.name",
+      "descriptionKey": "preset.ssrStarter.body",
+      "patch": {
+        "localization": { "enabled": true, "defaultLanguage": "en", "selectedLanguages": ["en"] },
+        "fonts": { "en": "Inter" },
+        "rendering": { "mode": "ssr", "prerender": true, "hydrationStrategy": "default" },
+        "features": { "toast": "none", "modal": "none", "datePicker": "none" },
+        "architecture": { "includeExampleDomain": false }
+      }
+    },
+    {
+      "id": "bilingual-site",
+      "nameKey": "preset.bilingual.name",
+      "descriptionKey": "preset.bilingual.body",
+      "patch": {
+        "localization": {
+          "enabled": true,
+          "defaultLanguage": "en",
+          "selectedLanguages": ["en", "ar"]
+        },
+        "fonts": { "en": "Figtree", "ar": "Cairo" },
+        "seo": { "enabled": true, "jsonLd": true, "sitemap": true }
+      }
+    },
+    {
+      "id": "enterprise-ddd",
+      "nameKey": "preset.enterprise.name",
+      "descriptionKey": "preset.enterprise.body",
+      "patch": {
+        "architecture": { "pattern": "ddd", "includeExampleDomain": true },
+        "features": { "toast": "customized", "modal": "customized", "datePicker": "install-later" }
+      }
+    },
+    {
+      "id": "minimal",
+      "nameKey": "preset.minimal.name",
+      "descriptionKey": "preset.minimal.body",
+      "patch": {
+        "rendering": { "mode": "csr", "prerender": false, "hydrationStrategy": "default" },
+        "localization": { "enabled": false },
+        "seo": { "enabled": false, "jsonLd": false, "sitemap": false },
+        "architecture": { "includeExampleDomain": false },
+        "features": { "toast": "none", "modal": "none", "datePicker": "none" },
+        "environments": [
+          {
+            "name": "development",
+            "apiUrl": "https://api.example.com",
+            "siteUrl": "https://example.com",
+            "extra": []
+          }
+        ]
+      }
+    }
+  ]
+}

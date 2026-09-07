@@ -1,0 +1,113 @@
+<div class="group">
+  <label class="switch">
+    <input type="checkbox" [checked]="localization().enabled" (change)="toggleEnabled($event)" />
+    <span class="track"></span>
+    <span class="check__text">{{ 'app.locOn' | translate }}</span>
+  </label>
+  @if (!localization().enabled) {
+    <p class="hint">{{ 'app.locOnD' | translate }}</p>
+  }
+</div>
+
+@if (localization().enabled) {
+  <div class="group">
+    <h2 class="group__head">{{ 'app.selectedLangs' | translate }}</h2>
+    <div class="panel--inset langlist">
+      @for (language of catalog; track language.code) {
+        <label class="check">
+          <input
+            type="checkbox"
+            [checked]="isSelected(language.code)"
+            (change)="onLanguage(language.code, $event)"
+          />
+          <span>
+            <span class="check__text">{{ language.name }} · {{ language.native }}</span>
+            @if (language.dir === 'rtl') {
+              <span class="badge badge--info">RTL</span>
+            }
+          </span>
+        </label>
+      }
+    </div>
+    @for (issue of languageIssues(); track issue.messageKey) {
+      <p class="error">{{ issue.messageKey | translate }}</p>
+    }
+  </div>
+
+  @if (isMultiple()) {
+    <div class="group">
+      <div class="field" style="max-width: 320px">
+        <label class="label" for="default-language">{{ 'app.primaryLang' | translate }}</label>
+        <app-dropdown
+          dropdownId="default-language"
+          [options]="defaultLanguageOptions()"
+          [value]="localization().defaultLanguage"
+          (valueChange)="onDefault($event)"
+        />
+        @for (issue of defaultIssues(); track issue.messageKey) {
+          <p class="error">{{ issue.messageKey | translate }}</p>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="group">
+    <h2 class="group__head">
+      {{ 'app.prefixH' | translate }}
+      <app-help headingKey="app.prefixH" bodyKey="app.prefixD" />
+    </h2>
+    <p class="group__sub">{{ 'app.prefixD' | translate }}</p>
+    <p class="group__head" style="font-size: 0.855rem">
+      {{ 'app.routesWritten' | translate }}
+      <span class="mono ltr-run">{{ localization().selectedLanguages.length }}</span>
+    </p>
+    <div class="code">
+      <pre>@for (language of selectedMeta(); track language.code) {  &#123; path: {{ prefixFor(language.code) }}, … &#125;   // {{ language.name }}
+}</pre>
+    </div>
+  </div>
+
+  <div class="group">
+    <h2 class="group__head">{{ 'app.fontH' | translate }}</h2>
+    @for (language of selectedMeta(); track language.code) {
+      <div class="rowcard">
+        <div class="rowcard__head">
+          <h3>{{ 'app.fontFor' | translate }} {{ language.name }}</h3>
+          <span class="spacer"></span>
+          <span class="badge badge--muted ltr-run">{{ language.dir }}</span>
+        </div>
+        <label class="visually-hidden" [attr.for]="'font-' + language.code">
+          {{ language.name }}
+        </label>
+        <app-dropdown
+          [dropdownId]="'font-' + language.code"
+          [options]="fontDropdownOptions(language.code)"
+          [value]="fontFor(language.code)"
+          (valueChange)="onFont(language.code, $event)"
+        />
+        <p class="fontsample" [attr.dir]="language.dir">{{ sampleFor(language) }}</p>
+      </div>
+    }
+    @if (hasChinese()) {
+      <div class="note note--info">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4M12 8h.01" stroke-linecap="round" />
+        </svg>
+        <div>{{ 'app.cjkNote' | translate }}</div>
+      </div>
+    }
+  </div>
+
+  @if (configuration.hasRtlLanguage()) {
+    <div class="group">
+      <div class="note note--info">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4M12 8h.01" stroke-linecap="round" />
+        </svg>
+        <div>{{ 'app.rtlNote' | translate }}</div>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,5 @@
+dist
+.angular
+node_modules
+public/og
+LIGHTHOUSE.md

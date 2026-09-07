@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>Angular Project Generator</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f6fa" />
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="mask-icon" href="mask-icon.svg" color="#2b59f0" />
+    <link rel="manifest" href="site.webmanifest" />
+    <script>
+      // No-flash theme + direction, before first paint. Keep the fallback
+      // colours in step with src/styles/_themes.scss and theme.model.ts.
+      (function () {
+        try {
+          var d = document.documentElement;
+          var t = localStorage.getItem('apg.theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          d.setAttribute('data-theme', t);
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', t === 'dark' ? '#0b0f16' : '#f4f6fa');
+        } catch (e) {
+          /* storage blocked — the default attributes above already apply */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

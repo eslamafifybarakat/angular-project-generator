@@ -1,0 +1,47 @@
+@use 'styles/tokens' as t;
+
+.toast {
+  position: fixed;
+  inset-block-end: t.space(5);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  z-index: t.z(toast);
+  display: flex;
+  align-items: center;
+  gap: t.space(3);
+  max-width: min(420px, calc(100vw - 32px));
+  padding: t.space(3) t.space(4);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: t.radius(md);
+  box-shadow: var(--shadow-pop);
+  font-size: 0.855rem;
+  font-weight: 560;
+}
+
+[dir='rtl'] .toast {
+  transform: translateX(50%);
+}
+
+.toast__text {
+  min-width: 0;
+}
+
+.toast__close {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-inline-start: auto;
+  padding: 0;
+  border: 0;
+  border-radius: t.radius(sm);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface-3);
+    color: var(--text);
+  }
+}

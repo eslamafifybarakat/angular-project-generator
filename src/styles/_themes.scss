@@ -1,0 +1,94 @@
+// ---------------------------------------------------------------------------
+// Single source of truth for colour.
+//
+// Three-way sync: any colour change here must also be reflected in
+//   1. src/index.html      — the inline no-flash script's fallback background
+//   2. src/app/core/theme/theme.model.ts — THEME_COLOR, for <meta name="theme-color">
+// Change one and not the others and the browser chrome drifts from the page.
+//
+// Status colours (--ok/--warn/--err/--info) are a documented extension of the
+// extracted theme contract, which has none. This app needs them for its own
+// validation UI; the configuration it produces does not emit them.
+// ---------------------------------------------------------------------------
+
+html[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f4f6fa;
+  --bg-2: #e9eef5;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --surface-3: #eef2f8;
+
+  --text: #0f1723;
+  --muted: #56637a;
+  --dim: #8794a8;
+
+  --line: #dbe2ed;
+  --line-2: #c3cedf;
+
+  --accent: #2b59f0;
+  --accent-2: #1e46cc;
+  --accent-soft: #e6ecfe;
+  --accent-ink: #ffffff;
+
+  --cta: #0e7c74;
+  --cta-soft: #dff1ef;
+  --cta-ink: #ffffff;
+
+  --brass: #9a6510;
+  --brass-soft: #faf0dd;
+
+  --ok: #12735a;
+  --ok-soft: #dff2ec;
+  --warn: #8e5a08;
+  --warn-soft: #fbeeda;
+  --err: #be2f2c;
+  --err-soft: #fbe6e5;
+  --info: #1866ae;
+  --info-soft: #e2eef9;
+
+  --shadow-pop: 0 12px 32px -8px rgb(15 23 35 / 22%), 0 2px 6px rgb(15 23 35 / 8%);
+  --grid: rgb(43 89 240 / 5.5%);
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0b0f16;
+  --bg-2: #0e1420;
+  --surface: #141b26;
+  --surface-2: #1a2331;
+  --surface-3: #212c3c;
+
+  --text: #e8eef7;
+  --muted: #9daabc;
+  --dim: #6c7a8e;
+
+  --line: #232e3e;
+  --line-2: #33425a;
+
+  --accent: #6e8fff;
+  --accent-2: #8aa5ff;
+  --accent-soft: #18243f;
+  --accent-ink: #0b0f16;
+
+  --cta: #3cc3b2;
+  --cta-soft: #12292a;
+  --cta-ink: #06120f;
+
+  --brass: #e0a94e;
+  --brass-soft: #2b2216;
+
+  --ok: #45c295;
+  --ok-soft: #102a23;
+  --warn: #e0a84a;
+  --warn-soft: #2a2114;
+  --err: #f0756e;
+  --err-soft: #2e1919;
+  --info: #5eaff2;
+  --info-soft: #12253a;
+
+  --shadow-pop: 0 14px 36px -10px rgb(0 0 0 / 70%), 0 2px 8px rgb(0 0 0 / 40%);
+  --grid: rgb(110 143 255 / 7%);
+}

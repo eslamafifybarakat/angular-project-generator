@@ -1,0 +1,101 @@
+<div class="wrap">
+  <div class="done">
+    <span class="done__tick" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6">
+        <path d="m20 6-11 11-5-5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+    <div>
+      <h1 class="done__title">{{ 'app.readyH' | translate }}</h1>
+      <p class="done__sub">{{ 'app.readySub' | translate }}</p>
+    </div>
+  </div>
+
+  @if (result(); as summary) {
+    <div class="panel zip">
+      <div>
+        <p class="zip__name mono ltr-run">{{ summary.zipName }}</p>
+        <p class="hint">
+          {{ summary.fileCount }} {{ 'app.filesWord' | translate }} ·
+          <span class="mono ltr-run">≈{{ summary.approximateKb }} kB</span>
+          <span class="badge badge--muted">{{ 'app.zipSize' | translate }}</span>
+        </p>
+      </div>
+      <span class="spacer"></span>
+      <button type="button" class="btn btn--primary" (click)="download()">
+        {{ 'app.download' | translate }}
+      </button>
+      <button type="button" class="btn" (click)="another()">
+        {{ 'app.another' | translate }}
+      </button>
+    </div>
+  }
+
+  <div class="seg tabs" role="tablist">
+    @for (item of tabs; track item.id) {
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-pressed]="tab() === item.id"
+        [attr.aria-selected]="tab() === item.id"
+        (click)="setTab(item.id)"
+      >
+        {{ item.labelKey | translate }}
+      </button>
+    }
+  </div>
+
+  @switch (tab()) {
+    @case ('files') {
+      <div class="panel">
+        <ul class="tree">
+          @for (row of rows(); track row.node.path) {
+            <li class="tree__row" [style.padding-inline-start.px]="indent(row.depth)">
+              @if (row.node.isDirectory) {
+                <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--accent)" stroke-width="2" aria-hidden="true">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-linejoin="round" />
+                </svg>
+              } @else {
+                <svg class="tree__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--dim)" stroke-width="2" aria-hidden="true">
+                  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke-linejoin="round" />
+                  <path d="M14 3v5h5" stroke-linejoin="round" />
+                </svg>
+              }
+              <span class="mono ltr-run">{{ row.node.name }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    @case ('config') {
+      <div class="panel">
+        <div class="config__head">
+          <p class="hint">{{ 'app.manifestSub' | translate }}</p>
+          <span class="spacer"></span>
+          <button type="button" class="btn" (click)="copyConfig()">
+            {{ 'app.copy' | translate }}
+          </button>
+        </div>
+        <div class="code">
+          <pre>{{ configJson() }}</pre>
+        </div>
+      </div>
+    }
+    @default {
+      <div class="panel">
+        <h2 class="group__head">{{ 'app.installH' | translate }}</h2>
+        @for (step of installSteps; track step) {
+          <div class="rowcard rowcard--slim">
+            <p class="option__title">
+              <span class="badge badge--accent mono ltr-run">{{ step }}</span>
+              {{ 'ready.install.' + step + '.title' | translate }}
+            </p>
+            <p class="option__desc mono ltr-run">
+              {{ 'ready.install.' + step + '.body' | translate }}
+            </p>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

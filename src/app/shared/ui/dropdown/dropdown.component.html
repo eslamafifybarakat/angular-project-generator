@@ -1,0 +1,61 @@
+<button
+  #trigger
+  type="button"
+  class="dropdown__trigger"
+  [class.dropdown__trigger--compact]="compact()"
+  [id]="dropdownId()"
+  role="combobox"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="listboxId"
+  [attr.aria-activedescendant]="open() ? optionId(activeIndex()) : null"
+  [attr.aria-labelledby]="labelledBy()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-invalid]="invalid() || null"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)"
+>
+  <span class="dropdown__value">{{ selected()?.label }}</span>
+  <svg
+    class="dropdown__chevron"
+    [class.is-open]="open()"
+    viewBox="0 0 10 7"
+    width="10"
+    height="7"
+    aria-hidden="true"
+  >
+    <path
+      d="M1 1l4 4 4-4"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+
+@if (open()) {
+  <ul class="dropdown__list" role="listbox" [id]="listboxId" [attr.aria-labelledby]="labelledBy()">
+    @for (option of options(); track option.value; let i = $index) {
+      <li
+        class="dropdown__option"
+        [id]="optionId(i)"
+        [attr.data-index]="i"
+        role="option"
+        tabindex="-1"
+        [attr.aria-selected]="option.value === value()"
+        [class.is-active]="i === activeIndex()"
+        (mouseenter)="setActive(i)"
+        (click)="selectOption(option)"
+        (keydown.enter)="selectOption(option)"
+      >
+        <span class="dropdown__option-label">{{ option.label }}</span>
+        @if (option.hint) {
+          <span class="badge badge--muted">{{ option.hint }}</span>
+        }
+      </li>
+    }
+  </ul>
+}

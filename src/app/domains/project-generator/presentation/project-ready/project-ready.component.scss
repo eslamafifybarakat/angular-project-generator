@@ -1,0 +1,72 @@
+@use 'styles/tokens' as t;
+
+.done {
+  display: flex;
+  align-items: center;
+  gap: t.space(4);
+  margin-bottom: t.space(6);
+}
+
+.done__tick {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.done__title {
+  font-size: 1.6rem;
+  font-weight: 660;
+  letter-spacing: -0.02em;
+}
+
+.done__sub {
+  color: var(--muted);
+  font-size: 0.855rem;
+}
+
+.zip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: t.space(3);
+  margin-bottom: t.space(5);
+}
+
+.zip__name {
+  font-size: 0.935rem;
+  font-weight: 620;
+}
+
+.tabs {
+  margin-bottom: t.space(4);
+}
+
+.tree {
+  max-height: 460px;
+  overflow: auto;
+}
+
+.tree__row {
+  display: flex;
+  align-items: center;
+  gap: t.space(2);
+  padding-block: 3px;
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+
+.tree__icon {
+  flex: 0 0 auto;
+}
+
+.config__head {
+  display: flex;
+  align-items: center;
+  gap: t.space(3);
+  margin-bottom: t.space(3);
+}

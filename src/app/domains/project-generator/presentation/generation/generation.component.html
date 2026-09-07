@@ -1,0 +1,63 @@
+<div class="wrap run">
+  @if (generator.runState() === 'failed' || !configuration.isValid()) {
+    <div class="note note--err">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4M12 16h.01" stroke-linecap="round" />
+      </svg>
+      <div>
+        <b>{{ 'app.genFailH' | translate }}</b>
+        <p>{{ 'app.genFailP' | translate }}</p>
+      </div>
+    </div>
+    <div class="run__actions">
+      <button type="button" class="btn" (click)="backToReview()">{{ 'app.back' | translate }}</button>
+      <button type="button" class="btn btn--primary" (click)="retry()">
+        {{ 'app.genRetry' | translate }}
+      </button>
+    </div>
+  } @else {
+    <h1 class="run__title">{{ 'app.genH' | translate }}</h1>
+    <p class="run__sub">{{ 'app.genSub' | translate }}</p>
+
+    <div
+      class="progress"
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="generator.progress()"
+    >
+      <span class="progress__fill" [style.width.%]="generator.progress()"></span>
+    </div>
+    <p class="run__pct mono ltr-run">{{ generator.progress() }}%</p>
+
+    <ol class="stages">
+      @for (stage of generator.stages(); track stage.labelKey; let i = $index) {
+        <li [class]="stageClass(i)">
+          <span class="stage__mark" aria-hidden="true">
+            @switch (generator.stateOf(i)) {
+              @case ('done') {
+                ✓
+              }
+              @case ('skipped') {
+                –
+              }
+              @case ('running') {
+                <span class="spinner"></span>
+              }
+              @default {
+                {{ i + 1 }}
+              }
+            }
+          </span>
+          <span class="stage__label">{{ stage.labelKey | translate }}</span>
+          @if (stage.skipped) {
+            <span class="badge badge--muted">{{ 'app.skipped' | translate }}</span>
+          } @else if (stage.detail) {
+            <span class="badge badge--muted mono ltr-run">{{ stage.detail }}</span>
+          }
+        </li>
+      }
+    </ol>
+  }
+</div>

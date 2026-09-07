@@ -1,0 +1,339 @@
+@use 'styles/tokens' as t;
+
+.wizard {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr) 306px;
+  align-items: start;
+  min-height: calc(100vh - var(--bar-h));
+
+  @include t.below(xl) {
+    grid-template-columns: 212px minmax(0, 1fr);
+  }
+
+  @include t.below(lg) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// -- left rail --------------------------------------------------------------
+.rail {
+  position: sticky;
+  top: var(--bar-h);
+  height: calc(100vh - var(--bar-h));
+  overflow-y: auto;
+  padding: t.space(5) t.space(4);
+  border-inline-end: 1px solid var(--line);
+
+  @include t.below(lg) {
+    display: none;
+  }
+}
+
+.rail__slug {
+  margin-bottom: t.space(3);
+  padding-inline-start: t.space(2);
+  color: var(--dim);
+  font-size: 0.78rem;
+}
+
+.rail__step {
+  display: flex;
+  align-items: center;
+  gap: t.space(3);
+  padding: 7px t.space(2);
+  border-radius: t.radius(sm);
+  color: var(--muted);
+  font-size: 0.855rem;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--surface-3);
+    color: var(--text);
+  }
+
+  &.is-done {
+    color: var(--text);
+
+    .rail__num {
+      background: var(--ok-soft);
+      border-color: transparent;
+      color: var(--ok);
+    }
+  }
+
+  &.is-current {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+
+    .rail__num {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+  }
+
+  &.is-bad .rail__num {
+    background: var(--err-soft);
+    border-color: transparent;
+    color: var(--err);
+  }
+}
+
+.rail__num {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: t.$font-mono;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rail__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// -- workspace --------------------------------------------------------------
+.work {
+  min-width: 0;
+  padding: t.space(6) t.space(7) t.space(10);
+
+  @include t.below(xl) {
+    padding: t.space(6) t.space(5) t.space(10);
+  }
+
+  @include t.below(lg) {
+    padding: t.space(5) t.space(4) 96px;
+  }
+}
+
+.work__head {
+  margin-bottom: t.space(6);
+}
+
+.work__kicker {
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-size: 0.78rem;
+}
+
+.work__title {
+  margin-bottom: t.space(2);
+  font-size: 1.75rem;
+  font-weight: 660;
+  letter-spacing: -0.02em;
+
+  @include t.below(lg) {
+    font-size: 1.45rem;
+  }
+}
+
+.work__intro {
+  max-width: 66ch;
+  color: var(--muted);
+  font-size: 0.855rem;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: t.space(3);
+  margin-top: t.space(7);
+  padding-top: t.space(5);
+  border-top: 1px solid var(--line);
+
+  @include t.below(lg) {
+    display: none;
+  }
+}
+
+// -- manifest ---------------------------------------------------------------
+.manifest {
+  position: sticky;
+  top: var(--bar-h);
+  height: calc(100vh - var(--bar-h));
+  overflow-y: auto;
+  padding: t.space(5) t.space(4);
+  border-inline-start: 1px solid var(--line);
+  background: var(--surface-2);
+
+  @include t.below(xl) {
+    display: none;
+
+    &.is-open {
+      display: block;
+      position: fixed;
+      inset-block-end: 0;
+      inset-inline: 0;
+      top: auto;
+      z-index: t.z(drawer);
+      height: 70vh;
+      border: 1px solid var(--line-2);
+      border-radius: t.radius(lg) t.radius(lg) 0 0;
+      background: var(--surface);
+      box-shadow: var(--shadow-pop);
+    }
+  }
+}
+
+.manifest__head {
+  display: flex;
+  align-items: center;
+  gap: t.space(2);
+  margin-bottom: t.space(3);
+
+  h2 {
+    font-size: 0.855rem;
+    font-weight: 640;
+  }
+}
+
+.manifest__close {
+  display: none;
+
+  @include t.below(xl) {
+    display: inline-flex;
+  }
+}
+
+.manifest__list {
+  margin-top: t.space(3);
+}
+
+.manifest__row {
+  display: block;
+  padding: 7px t.space(2);
+  border-inline-start: 2px solid transparent;
+  border-radius: t.radius(sm);
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--surface-3);
+    border-inline-start-color: var(--accent);
+  }
+}
+
+.manifest__key {
+  display: block;
+  color: var(--dim);
+  font-size: 11px;
+}
+
+.manifest__value {
+  display: block;
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.manifest__divider {
+  margin: t.space(3) 0;
+  border-top: 1px dashed var(--line);
+}
+
+.swatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+}
+
+// -- mobile chrome ----------------------------------------------------------
+.mobilebar {
+  display: none;
+
+  @include t.below(lg) {
+    display: block;
+    position: sticky;
+    top: var(--bar-h);
+    z-index: t.z(bar);
+    padding: t.space(3) t.space(4);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+.mobilebar__head {
+  display: flex;
+  align-items: center;
+  gap: t.space(2);
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+
+  b {
+    color: var(--text);
+    font-size: 0.855rem;
+    font-weight: 620;
+  }
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.chip {
+  display: block;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 5px;
+  border-radius: t.radius(pill);
+  background: var(--surface-3);
+
+  &.is-done {
+    background: var(--ok);
+  }
+
+  &.is-bad {
+    background: var(--err);
+  }
+
+  &.is-current {
+    width: 34px;
+    background: var(--accent);
+  }
+}
+
+.mobilenav {
+  display: none;
+
+  @include t.below(lg) {
+    display: flex;
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline: 0;
+    z-index: t.z(bar);
+    gap: t.space(3);
+    padding: t.space(3) t.space(4);
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+
+    .btn {
+      flex: 1;
+      min-height: var(--tap);
+    }
+  }
+}
