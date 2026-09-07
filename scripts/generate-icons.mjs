@@ -6,20 +6,22 @@
  * raster size here is derived, so the set cannot drift out of step with the
  * brand mark.
  */
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import sharp from 'sharp';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const PUBLIC = resolve(ROOT, 'public');
 
+await mkdir(resolve(PUBLIC, 'icons'), { recursive: true });
+
 const OUTPUTS = [
-  { source: 'mark-color.svg', out: 'icon-192.png', size: 192 },
-  { source: 'mark-color.svg', out: 'icon-512.png', size: 512 },
-  { source: 'mark-color.svg', out: 'apple-touch-icon.png', size: 180 },
+  { source: 'brand/mark-color.svg', out: 'icons/logo-icon-192.png', size: 192 },
+  { source: 'brand/mark-color.svg', out: 'icons/logo-icon-512.png', size: 512 },
+  { source: 'brand/mark-color.svg', out: 'icons/apple-touch-icon.png', size: 180 },
   // Maskable icons need the mark inside the safe zone, so it is padded rather
   // than simply scaled: a full-bleed mark gets its corners cropped on Android.
-  { source: 'mark-color.svg', out: 'icon-512-maskable.png', size: 512, padding: 0.2 },
+  { source: 'brand/mark-color.svg', out: 'icons/logo-icon-512-maskable.png', size: 512, padding: 0.2 },
 ];
 
 for (const target of OUTPUTS) {

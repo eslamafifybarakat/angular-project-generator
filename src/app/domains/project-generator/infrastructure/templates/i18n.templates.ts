@@ -273,12 +273,13 @@ export class TranslatePipe implements PipeTransform {
 
 function localeJson(code: string, ctx: TemplateContext): string {
   const name = ctx.cfg.project.name || 'App';
+  const keyPrefix = (ctx.cfg.project.slug || 'app').replace(/-/g, '_');
   return (
     JSON.stringify(
       {
-        'app.name': name,
-        'app.description': ctx.cfg.project.description || '',
-        'nav.home': code === ctx.cfg.localization.defaultLanguage ? 'Home' : `[${code}] Home`,
+        [`${keyPrefix}_app_name`]: name,
+        [`${keyPrefix}_app_description`]: ctx.cfg.project.description || '',
+        [`${keyPrefix}_nav_home`]: code === ctx.cfg.localization.defaultLanguage ? 'Home' : `[${code}] Home`,
       },
       null,
       2,

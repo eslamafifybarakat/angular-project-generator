@@ -126,6 +126,18 @@ svg {
   text-align: start;
 }
 
+// Paired with [appLazyImage] (shared/directives/lazy-image.directive.ts):
+// invisible until the browser actually finishes loading it (or its
+// fallback), so a slow image never flashes as a blank broken box first.
+.lazy-image {
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+
+  &.lazy-image--loaded {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

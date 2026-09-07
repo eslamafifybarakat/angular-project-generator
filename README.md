@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="public/logo-white.svg">
-  <source media="(prefers-color-scheme: light)" srcset="public/logo-color.svg">
-  <img alt="Angular Project Generator" src="public/logo-color.svg" height="56">
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/logo-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="public/brand/logo-color.svg">
+  <img alt="Angular Project Generator" src="public/brand/logo-color.svg" height="56">
 </picture>
 
 # Angular Project Generator
@@ -161,13 +161,15 @@ angular-project-generator/
 ├── .github/workflows/ci.yml
 ├── .vscode/{extensions,settings}.json
 ├── public/
-│   ├── og/                       default + one card per preset (generated)
-│   ├── favicon.svg, mark-color.svg, mark-white.svg,
-│   │   logo-color.svg, logo-white.svg, mask-icon.svg
-│   ├── favicon.ico, icon-192.png, icon-512.png,
-│   │   icon-512-maskable.png, apple-touch-icon.png   (generated from the SVGs)
+│   ├── favicon.ico, favicon.svg   root-level by browser/crawler convention
 │   ├── site.webmanifest, robots.txt
-│   └── config.json               runtime override target
+│   ├── config.json               runtime override target
+│   ├── brand/                    source-of-truth SVG marks (designer-edited)
+│   │   └── mark-color.svg, mark-white.svg, logo-color.svg, logo-white.svg
+│   ├── icons/                    PWA/touch icons (generated from brand/mark-color.svg)
+│   │   └── apple-touch-icon.png, logo-icon-192.png, logo-icon-512.png,
+│   │       logo-icon-512-maskable.png, mask-icon.svg
+│   └── og/                       default + one card per preset (generated)
 ├── scripts/                      12 files
 ├── src/
 │   ├── app/
